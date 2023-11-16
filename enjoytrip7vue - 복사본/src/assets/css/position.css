@@ -1,0 +1,14 @@
+.text-center {
+  text-align: center;
+}
+
+.left-space-3 {
+  margin-left: 3px;
+}
+.left-space-6 {
+  margin-left: 6px;
+}
+
+.hover-pointer:hover{
+  cursor: pointer;
+}

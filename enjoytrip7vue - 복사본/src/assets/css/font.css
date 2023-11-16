@@ -1,0 +1,32 @@
+@font-face {
+  font-family: 'JalnanGothic';
+  src: url('@/assets/fonts/JalnanGothicTTF.ttf');
+}
+@font-face {
+  font-family: 'SUITE-Bold';
+  src: url('@/assets/fonts/SUITE-Bold.ttf');
+}
+@font-face {
+  font-family: 'SUITE-Regular';
+  src: url('@/assets/fonts/SUITE-Regular.ttf');
+}
+@font-face {
+  font-family: 'SUITE-Light';
+  src: url('@/assets/fonts/SUITE-Light.ttf');
+}
+.jalnan-gothic {
+  font-family: 'JalnanGothic';
+}
+.suite-regular {
+  font-family: 'SUITE-Regular';
+}
+.suite-light {
+  font-family: 'SUITE-Light';
+}
+.suite-bold {
+  font-family: 'SUITE-Bold';
+}
+.glow-white {
+  color: #fff;
+  text-shadow: 0px 0px 8px #000000;
+}
