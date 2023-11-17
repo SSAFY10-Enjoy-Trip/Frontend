@@ -12,6 +12,7 @@
           <!-- 맵 생성 실행 -->
           <div id="map_div"></div>
         </body>
+        <img src="../assets/boardNoti.png" alt="" class="width-100" />
       </div>
     </div>
     <div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
