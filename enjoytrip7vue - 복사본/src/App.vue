@@ -14,10 +14,10 @@ const isLoginChange = (check) => {
 <template>
   <div class="container"></div>
 
-  <div class="row">
+  <logo-bar v-bind:isLogin="isLogin" v-on:call-is-login="isLoginChange"></logo-bar>
+  <!-- <div class="row">
     <div class="col-lg-1 col-xl-2"></div>
     <div class="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-8">
-      <logo-bar v-bind:isLogin="isLogin" v-on:call-is-login="isLoginChange"></logo-bar>
       <div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel">
         <div class="carousel-indicators">
           <button
@@ -87,20 +87,17 @@ const isLoginChange = (check) => {
       </div>
     </div>
     <div class="col-lg-1 col-xl-2"></div>
-  </div>
+  </div> -->
 
-  <div class="row">
+  <router-view v-on:call-is-login="isLoginChange" :key="$route.fullPath"></router-view>
+  <!-- <div class="row">
     <div class="col-lg-1 col-xl-2"></div>
     <div class="col-12 col-sm-12 col-md-3 col col-lg-3 col-xl-2">
       <side-page></side-page>
     </div>
-    <div class="col-12 col-sm-12 col-md-9 col col-lg-7 col-xl-6">
-      <!-- <board-main></board-main> -->
-      <router-view v-on:call-is-login="isLoginChange" :key="$route.fullPath"></router-view>
-      <!-- <RouterView />/ -->
-    </div>
+    <div class="col-12 col-sm-12 col-md-9 col col-lg-7 col-xl-6"></div>
     <div class="col-lg-1 col-xl-2"></div>
-  </div>
+  </div> -->
 </template>
 
 <style scoped></style>

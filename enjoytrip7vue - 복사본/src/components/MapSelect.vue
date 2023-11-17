@@ -1,47 +1,80 @@
 <template>
-  <div>
-    <table class="mb-3" style="width: 100%">
-      <tr
-        class="text-center suite-bold"
-        style="
-          background-color: #fdf7d6;
-          width: 20%;
-          border-radius: 0px 0px 0px 0px;
-          border: 1px #000 solid;
-        "
+  <div class="row">
+    <div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8">
+      <body onload="initTmap()">
+        <!-- 맵 생성 실행 -->
+        <div id="map_div"></div>
+      </body>
+    </div>
+    <div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
+      <button
+        v-for="(item, index) in rowCount"
+        :key="index"
+        @click="selectDay(item)"
+        class="day-btn suite-bold"
+        :id="'day-btn-' + index"
       >
-        <td class="p-2">방문순서</td>
-        <td>주소</td>
-        <td>삭제</td>
-      </tr>
-      <tr v-for="(item, idx) in stopoverAddres" :key="{ idx }">
-        <td
-          class="text-center suite-bold p-2"
-          style="background-color: #fdf7d6; width: 20%; border-radius: 0px 0px 0px 0px"
+        {{ item }}일차
+      </button>
+      <button class="day-plus-btn suite-bold left-space-6" @click="countUp">+</button>
+      <button class="day-minus-btn suite-bold left-space-3" @click="countDown">-</button>
+      <table class="mb-3 width-100 right-space-10">
+        <tr
+          class="text-center suite-bold"
+          style="
+            background-color: #fdf7d6;
+            width: 20%;
+            border-radius: 0px 0px 0px 0px;
+            border: 1px #000 solid;
+          "
         >
-          💠 장소 {{ idx + 1 }}
-        </td>
-        <td class="p-2">{{ item }}</td>
-        <td>
-          <button @click="removePlace(idx)" class="btn suite-bold" id="delete-place">삭제</button>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="3">
-          <button @click="addPlace" class="btn suite-bold" id="add-place-btn">➕ 장소추가</button>
-        </td>
-      </tr>
-    </table>
-    <body onload="initTmap()">
-      <!-- 맵 생성 실행 -->
-      <div id="map_div"></div>
-    </body>
+          <td class="p-2">방문순서</td>
+          <td>주소</td>
+          <td>삭제</td>
+        </tr>
+        <tr v-for="(item, idx) in rowData.rowNameValue[selectRow]" :key="{ idx }">
+          <td
+            class="text-center suite-bold p-2"
+            style="background-color: #fdf7d6; width: 20%; border-radius: 0px 0px 0px 0px"
+          >
+            💠 장소 {{ idx + 1 }}
+          </td>
+          <td class="p-2">{{ item }}</td>
+          <td>
+            <button @click="removePlace(idx)" class="btn suite-bold" id="delete-place">X</button>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <button @click="addPlace" class="btn suite-bold" id="add-place-btn">➕ 장소추가</button>
+          </td>
+        </tr>
+      </table>
+
+      <div id="boardDetailContent" class="mt-2 p-3">
+        <h3 class="suite-bold">코스 선정</h3>
+        <div class="suite-regular">핀을 움직이고, 장소추가를 통해 코스에 등록하세요!</div>
+
+        <hr />
+        <h3 class="suite-bold">코스 이름</h3>
+        <input class="board-content mt-2 mb-4 p-2" placeholder="개성있는 코스 이름을 지어주세요!" />
+
+        <h3 class="suite-bold">매력 포인트</h3>
+        <textarea class="board-content mt-2 mb-4 p-2" placeholder="코스에 대해 설명해주세요" />
+
+        <hr />
+
+        <button @click="" v-show="true" class="btn btn-success m-1">작성완료</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 var map
 // 페이지가 로딩이 된 후 호출하는 함수입니다.
+
+// import Vue from 'vue'
 
 import { ref, reactive } from 'vue'
 const stopoverAddres = reactive([])
@@ -52,7 +85,28 @@ const addPlace = () => {
   loadGetLonLatFromAddress()
 }
 const removePlace = (idx) => {
-  stopoverAddres.splice(idx, 1)
+  rowData.rowNameValue[selectRow.value].splice(idx, 1)
+  rowData.rowPositionXValue[selectRow.value].splice(idx, 1)
+  rowData.rowPositionYValue[selectRow.value].splice(idx, 1)
+  markerList.mark[selectRow.value][idx].setMap(null)
+  markerList.mark[selectRow.value].splice(idx, 1)
+
+  // 마커 제어
+  allMakerCount.value--
+  let cnt = 1
+  // 전체 마커를 돌면서 라벨 재 지정
+  for (let i = 0; i < markerList.mark.length; i++) {
+    for (let j = 0; j < markerList.mark[i].length; j++) {
+      const label =
+        "<span class='suite-regular' style='padding: 1px 5px; border-radius: 3px; background-color: #46414E;color:white'>" +
+        '장소 ' +
+        cnt +
+        '</span>'
+      // 라벨 설정
+      markerList.mark[i][j].setLabel(label)
+      cnt++
+    }
+  }
 }
 
 function loadGetLonLatFromAddress() {
@@ -64,6 +118,17 @@ function loadGetLonLatFromAddress() {
     addressType: 'A04' //주소타입 옵션 설정 입니다.
   }
 
+  // 해당 일자에 배열이 없다면 생성
+  if (rowData.rowNameValue[selectRow.value] == undefined) {
+    rowData.rowNameValue[selectRow.value] = new Array()
+    rowData.rowPositionXValue[selectRow.value] = new Array()
+    rowData.rowPositionYValue[selectRow.value] = new Array()
+    markerList.mark[selectRow.value] = new Array()
+  }
+
+  rowData.rowPositionXValue[selectRow.value].push(corseX.value)
+  rowData.rowPositionYValue[selectRow.value].push(corseY.value)
+
   var params = {
     onComplete: onComplete //데이터 로드가 성공적으로 완료 되었을때 실행하는 함수 입니다.
   }
@@ -72,11 +137,80 @@ function loadGetLonLatFromAddress() {
 }
 //리버스 지오코딩
 function onComplete() {
-  console.log('여길봐라')
-  console.log(this._responseData)
+  // console.log(this._responseData)
   var result = this._responseData.addressInfo.fullAddress
   stopoverAddres.push(result)
-  // console.log(result)
+
+  rowData.rowNameValue[selectRow.value].push(result)
+  // rowData.rowNameValue[selectRow] = stopoverAddres
+  // console.log(rowData.rowNameValue[selectRow.value])
+  console.log(rowData)
+
+  allMakerCount.value++
+  //선택 장소 Marker 객체 생성.
+  const label =
+    "<span class='suite-regular' style='padding: 1px 5px; border-radius: 3px; background-color: #46414E;color:white'>" +
+    '장소 ' +
+    allMakerCount.value +
+    '</span>'
+  // 해당 페이지의 마커 생성
+  markerList.mark[selectRow.value].push(
+    new Tmapv2.Marker({
+      position: new Tmapv2.LatLng(corseX.value, corseY.value), //Marker의 중심좌표 설정.
+      icon: 'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FcwbTcX%2FbtsAryak2dp%2Fbrt08hPx7XB2T4XouzR9w0%2Fimg.png',
+      map: map, //Marker가 표시될 Map 설정..
+      title: result, //Marker 타이틀.
+      animation: Tmapv2.MarkerOptions.ANIMATE_BALLOON, //Marker 애니메이션.
+      animationLength: 100, //애니메이션 길이.
+      label: label
+    })
+  )
+  console.log(markerList.mark)
+}
+
+// 각 일차 별 일정 추가
+const rowCount = ref(1)
+const allMakerCount = ref(0)
+const rowData = reactive({
+  rowCount: rowCount,
+  rowNameValue: [[]], // 주소지 이름
+  rowPositionYValue: [[]], // 주소지 좌표(Y)
+  rowPositionXValue: [[]] // 주소지 좌표(Y)
+})
+const markerList = reactive({
+  mark: [[]]
+})
+const selectRow = ref(1)
+const countUp = () => {
+  rowCount.value += 1
+  selectRow.value = rowCount.value
+  // console.log(selectRow.value + '으로 전환')
+}
+const countDown = () => {
+  // console.log(rowCount.value - 1 + '으로 전환')
+  if (rowCount.value - 1 >= 1) {
+    rowData.rowNameValue[rowCount.value] = new Array()
+    rowCount.value -= 1
+  }
+  selectRow.value = rowCount.value
+}
+const selectDay = (num) => {
+  selectRow.value = num
+  changeBackground(num - 1)
+}
+
+const changeBackground = (num) => {
+  var button = document.getElementById('day-btn-' + num)
+  if (button) button.style.backgroundColor = '#ffdd448f' // 원하는 배경색으로 변경
+  for (let i = 0; i < 100; i++) {
+    var btn = document.getElementById('day-btn-' + i)
+    if (num == i) continue
+    if (btn) {
+      btn.style.backgroundColor = 'white'
+    } else {
+      break
+    }
+  }
 }
 
 export default {
@@ -89,7 +223,14 @@ export default {
       removePlace,
       corseX,
       corseY,
-      stopoverAddres
+      stopoverAddres,
+      countUp,
+      countDown,
+      selectDay,
+      rowCount,
+      rowData,
+      selectRow,
+      changeBackground
     }
   },
   mounted() {
@@ -103,7 +244,7 @@ export default {
         // "map_div" : 지도가 표시될 div의 id
         center: new Tmapv2.LatLng(37.5652045, 126.98702028),
         width: '100%', // 지도의 넓이
-        height: '400px', // 지도의 높이
+        height: '100vh', // 지도의 높이
         zoom: 17
       })
 
@@ -115,7 +256,7 @@ export default {
       // 마커를 생성합니다.
       var marker1 = new Tmapv2.Marker({
         position: wgs84,
-        icon: 'https://static-00.iconduck.com/assets.00/location-pin-icon-385x512-fdmj5z3x.png',
+        icon: 'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbrJde1%2FbtsAvuxQXbZ%2FqKPfq62RsKe6PAZ0GWkKh1%2Fimg.png',
         draggable: true,
         map: map
       })
@@ -175,5 +316,52 @@ table {
 #add-place-btn:active {
   position: relative;
   top: 1px;
+}
+
+#boardDetailContent {
+  border: 1px solid #888;
+}
+
+.board-content {
+  border: #888 1px solid;
+  border-radius: 4px;
+  width: 100%;
+}
+textarea {
+  height: 300px;
+}
+.day-btn {
+  border: 1px solid #353014;
+  border-radius: 10px 10px 0px 0px;
+  padding: 4px 9px;
+  background-color: #ffffff;
+  color: #353014;
+}
+.day-btn:hover {
+  background-color: #ffdd448f;
+}
+
+.day-plus-btn {
+  border: 1px solid #353014;
+  border-radius: 100%;
+  padding: 2px 8px;
+  background-color: #fff;
+  color: #353014;
+}
+.day-plus-btn:hover {
+  background-color: #538662;
+}
+.day-minus-btn {
+  border: 1px solid #353014;
+  border-radius: 100%;
+  padding: 2px 8px;
+  background-color: #fff;
+  color: #353014;
+}
+.day-minus-btn:hover {
+  background-color: #d86767;
+}
+#map_div {
+  margin-left: 10px;
 }
 </style>

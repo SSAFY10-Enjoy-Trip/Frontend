@@ -71,6 +71,7 @@
 </template>
 
 <script>
+import { useKeyStore } from '@/store/appkey.js'
 var map
 var markerInfo
 //출발지,도착지 마커
@@ -370,14 +371,19 @@ export default {
       var searchOption = $('#selectLevel').val()
 
       var trafficInfochk = $('#year').val()
+
       var headers = {}
-      headers['appKey'] = 'dQTHQzRPJI7902B5BsQIg5pKJQgQ5cGP1Mi6omTJ'
+      const keyStore = useKeyStore()
+      headers['appKey'] = keyStore
+      let url =
+        'https://apis.openapi.sk.com/tmap/routes?version=1&format=json&callback=result&appKey=' +
+        keyStore
 
       //JSON TYPE EDIT [S]
       $.ajax({
         type: 'POST',
         headers: headers,
-        url: 'https://apis.openapi.sk.com/tmap/routes?version=1&format=json&callback=result&appKey=dQTHQzRPJI7902B5BsQIg5pKJQgQ5cGP1Mi6omTJ',
+        url: url,
         async: false,
         data: {
           startX: sX,

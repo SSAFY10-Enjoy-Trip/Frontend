@@ -136,6 +136,9 @@ function onComplete() {
   console.log(stopoverAddres)
 }
 
+// 앱키
+import { useKeyStore } from '@/store/appkey.js'
+
 export default {
   setup() {
     stopoverAddres.length = 0
@@ -263,7 +266,8 @@ export default {
         var searchOption = $('#selectLevel').val()
 
         var headers = {}
-        headers['appKey'] = 'dQTHQzRPJI7902B5BsQIg5pKJQgQ5cGP1Mi6omTJ'
+        const keyStore = useKeyStore()
+        headers['appKey'] = keyStore
         headers['Content-Type'] = 'application/json'
 
         var param = JSON.stringify({

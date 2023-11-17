@@ -8,7 +8,14 @@
 .left-space-6 {
   margin-left: 6px;
 }
+.right-space-10 {
+  margin-right: 10px;
+}
 
-.hover-pointer:hover{
+.hover-pointer:hover {
   cursor: pointer;
+}
+
+.width-100 {
+  width: 100%;
 }
