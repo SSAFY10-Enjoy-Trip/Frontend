@@ -266,8 +266,8 @@ export default {
         var searchOption = $('#selectLevel').val()
 
         var headers = {}
-        const keyStore = useKeyStore()
-        headers['appKey'] = keyStore
+        const { appkey } = useKeyStore()
+        headers['appKey'] = appkey
         headers['Content-Type'] = 'application/json'
 
         var param = JSON.stringify({

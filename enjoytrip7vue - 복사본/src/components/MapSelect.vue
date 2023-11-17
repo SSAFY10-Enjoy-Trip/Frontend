@@ -1,70 +1,81 @@
 <template>
   <div class="row">
     <div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8">
-      <body onload="initTmap()">
-        <!-- 맵 생성 실행 -->
-        <div id="map_div"></div>
-      </body>
+      <div class="p-3">
+        <body onload="initTmap()" class="mb-3">
+          <div class="text-center">
+            <h2 class="jalnan-gothic"># 나만의 코스 알리기</h2>
+            <h4 class="suite-regular">핀을 움직이고, 장소추가를 통해 코스에 등록하세요!</h4>
+          </div>
+
+          <hr />
+          <!-- 맵 생성 실행 -->
+          <div id="map_div"></div>
+        </body>
+      </div>
     </div>
     <div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
-      <button
-        v-for="(item, index) in rowCount"
-        :key="index"
-        @click="selectDay(item)"
-        class="day-btn suite-bold"
-        :id="'day-btn-' + index"
-      >
-        {{ item }}일차
-      </button>
-      <button class="day-plus-btn suite-bold left-space-6" @click="countUp">+</button>
-      <button class="day-minus-btn suite-bold left-space-3" @click="countDown">-</button>
-      <table class="mb-3 width-100 right-space-10">
-        <tr
-          class="text-center suite-bold"
-          style="
-            background-color: #fdf7d6;
-            width: 20%;
-            border-radius: 0px 0px 0px 0px;
-            border: 1px #000 solid;
-          "
+      <div class="p-3">
+        <button
+          v-for="(item, index) in rowCount"
+          :key="index"
+          @click="selectDay(item)"
+          class="day-btn suite-bold"
+          :id="'day-btn-' + index"
         >
-          <td class="p-2">방문순서</td>
-          <td>주소</td>
-          <td>삭제</td>
-        </tr>
-        <tr v-for="(item, idx) in rowData.rowNameValue[selectRow]" :key="{ idx }">
-          <td
-            class="text-center suite-bold p-2"
-            style="background-color: #fdf7d6; width: 20%; border-radius: 0px 0px 0px 0px"
+          {{ item }}일차
+        </button>
+        <button class="day-plus-btn suite-bold left-space-6" @click="countUp">+</button>
+        <button class="day-minus-btn suite-bold left-space-3" @click="countDown">-</button>
+        <table class="mb-3 width-100 right-space-10">
+          <tr
+            class="text-center suite-bold"
+            style="
+              background-color: #fdf7d6;
+              width: 20%;
+              border-radius: 0px 0px 0px 0px;
+              border: 1px #000 solid;
+            "
           >
-            💠 장소 {{ idx + 1 }}
-          </td>
-          <td class="p-2">{{ item }}</td>
-          <td>
-            <button @click="removePlace(idx)" class="btn suite-bold" id="delete-place">X</button>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">
-            <button @click="addPlace" class="btn suite-bold" id="add-place-btn">➕ 장소추가</button>
-          </td>
-        </tr>
-      </table>
+            <!-- <td class="p-2">방문순서</td>
+            <td>주소</td>
+            <td>삭제</td> -->
+          </tr>
+          <tr v-for="(item, idx) in rowData.rowNameValue[selectRow]" :key="{ idx }">
+            <td
+              class="text-center suite-bold p-2"
+              style="background-color: #fdf7d6; width: 20%; border-radius: 0px 0px 0px 0px"
+            >
+              💠 장소 {{ idx + 1 }}
+            </td>
+            <td class="p-2">{{ item }}</td>
+            <td>
+              <button @click="removePlace(idx)" class="btn suite-bold" id="delete-place">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3">
+              <button @click="addPlace" class="btn suite-bold" id="add-place-btn">
+                ➕ 장소추가
+              </button>
+            </td>
+          </tr>
+        </table>
 
-      <div id="boardDetailContent" class="mt-2 p-3">
-        <h3 class="suite-bold">코스 선정</h3>
-        <div class="suite-regular">핀을 움직이고, 장소추가를 통해 코스에 등록하세요!</div>
+        <div id="boardDetailContent" class="mt-2 p-3">
+          <h3 class="suite-bold">🏄‍♂️ 코스 이름</h3>
+          <input
+            class="board-content mt-2 mb-4 p-2"
+            placeholder="개성있는 코스 이름을 지어주세요!"
+          />
 
-        <hr />
-        <h3 class="suite-bold">코스 이름</h3>
-        <input class="board-content mt-2 mb-4 p-2" placeholder="개성있는 코스 이름을 지어주세요!" />
+          <h3 class="suite-bold">💖 매력 포인트</h3>
+          <textarea class="board-content mt-2 mb-4 p-2" placeholder="코스에 대해 설명해주세요" />
 
-        <h3 class="suite-bold">매력 포인트</h3>
-        <textarea class="board-content mt-2 mb-4 p-2" placeholder="코스에 대해 설명해주세요" />
+          <hr />
 
-        <hr />
-
-        <button @click="" v-show="true" class="btn btn-success m-1">작성완료</button>
+          <button @click="" v-show="true" class="btn btn-success m-1">작성완료</button>
+        </div>
       </div>
     </div>
   </div>
@@ -244,7 +255,7 @@ export default {
         // "map_div" : 지도가 표시될 div의 id
         center: new Tmapv2.LatLng(37.5652045, 126.98702028),
         width: '100%', // 지도의 넓이
-        height: '100vh', // 지도의 높이
+        height: '60vh', // 지도의 높이
         zoom: 17
       })
 
@@ -320,6 +331,7 @@ table {
 
 #boardDetailContent {
   border: 1px solid #888;
+  border-radius: 10px;
 }
 
 .board-content {
@@ -360,8 +372,5 @@ textarea {
 }
 .day-minus-btn:hover {
   background-color: #d86767;
-}
-#map_div {
-  margin-left: 10px;
 }
 </style>

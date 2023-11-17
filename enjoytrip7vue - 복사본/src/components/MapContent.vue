@@ -373,11 +373,12 @@ export default {
       var trafficInfochk = $('#year').val()
 
       var headers = {}
-      const keyStore = useKeyStore()
-      headers['appKey'] = keyStore
+      const { appkey } = useKeyStore()
+      headers['appKey'] = appkey
+      headers['appKey'] = appkey
       let url =
         'https://apis.openapi.sk.com/tmap/routes?version=1&format=json&callback=result&appKey=' +
-        keyStore
+        appkey
 
       //JSON TYPE EDIT [S]
       $.ajax({
