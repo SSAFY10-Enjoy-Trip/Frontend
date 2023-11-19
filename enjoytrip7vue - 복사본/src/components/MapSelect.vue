@@ -181,8 +181,8 @@ function onComplete() {
 }
 
 // 각 일차 별 일정 추가
-const rowCount = ref(1)
-const allMakerCount = ref(0)
+let rowCount = ref(1)
+let allMakerCount = ref(0)
 const rowData = reactive({
   rowCount: rowCount,
   rowNameValue: [[]], // 주소지 이름
@@ -192,7 +192,7 @@ const rowData = reactive({
 const markerList = reactive({
   mark: [[]]
 })
-const selectRow = ref(1)
+let selectRow = ref(1)
 const countUp = () => {
   rowCount.value += 1
   selectRow.value = rowCount.value
@@ -227,7 +227,7 @@ const changeBackground = (num) => {
 
 export default {
   setup() {
-    stopoverAddres.length = 0
+    stopoverAddres.length = 0;
   },
   data() {
     return {
@@ -247,6 +247,14 @@ export default {
   },
   mounted() {
     this.initTmap()
+    
+    rowData.rowCount = 1;
+    rowData.rowNameValue = [[]];
+    rowData.rowPositionYValue = [[]];
+    rowData.rowPositionXValue = [[]];
+    rowCount.value = 1;
+    allMakerCount.value = 0;
+    selectRow.value = 1;
   },
   methods: {
     initTmap() {
