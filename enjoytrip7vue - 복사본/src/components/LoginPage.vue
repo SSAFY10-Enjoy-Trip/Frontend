@@ -11,7 +11,7 @@
             class="form-control"
             aria-label="Sizing example input"
             aria-describedby="inputGroup-sizing-sm"
-            name="email" v-model="user.userEmail"
+            name="email" v-model="user.email"
           />
         </div>
         <div class="input-group input-group-sm mb-3">
@@ -21,13 +21,13 @@
             class="form-control"
             aria-label="Sizing example input"
             aria-describedby="inputGroup-sizing-sm"
-            name="password" v-model="user.userPassword"
+            name="password" v-model="user.password"
           />
         </div>
         <div class="d-grid gap-2 d-md-block">
           <button class="btn btn-primary mx-2" type="button" @click="login">로그인</button>
           <button class="btn btn-outline-secondary mx-2" type="button">
-            <router-link to="/register" class="nav-link">회원가입</router-link>
+            <router-link to="/register" replace class="nav-link">회원가입</router-link>
           </button>
         </div>
       </div>
@@ -45,8 +45,8 @@ const router = useRouter();
 const user = ref({});
 const clear = () => {
   user.value = {
-    userEmail: '',
-    userPassword: ''
+    email: '',
+    password: ''
   }
 }
 

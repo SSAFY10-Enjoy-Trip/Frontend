@@ -11,7 +11,7 @@
             class="form-control"
             aria-label="Sizing example input"
             aria-describedby="inputGroup-sizing-sm"
-            v-model="user.userEmail"
+            v-model="user.email"
           />
         </div>
         <div class="input-group input-group-sm mb-3">
@@ -21,7 +21,7 @@
             class="form-control"
             aria-label="Sizing example input"
             aria-describedby="inputGroup-sizing-sm"
-            v-model="user.userName"
+            v-model="user.name"
           />
         </div>
         <div class="input-group input-group-sm mb-3">
@@ -31,13 +31,13 @@
             class="form-control"
             aria-label="Sizing example input"
             aria-describedby="inputGroup-sizing-sm"
-            v-model="user.userPassword"
+            v-model="user.password"
           />
         </div>
         <div class="d-grid gap-2 d-md-block">
           <button class="btn btn-primary mx-2" type="button" @click="register">회원가입</button>
           <button class="btn btn-outline-secondary mx-2" type="button">
-            <router-link to="/login" class="nav-link">로그인</router-link>
+            <router-link to="/login" replace class="nav-link">로그인</router-link>
           </button>
         </div>
       </div>
@@ -53,16 +53,16 @@ const user = ref({});
 
 const clear = () => {
   user.value = {
-    userEmail: '',
-    userName: '',
-    userPassword: ''
+    email: '',
+    name: '',
+    password: ''
   }
 }
 
 const register = async () => {
   try {
     console.log(user.value);
-    let {data} = await axios.post('http://localhost:8080/axios/register', user.value) // 이미 javascript 객체
+    let {data} = await axios.post('http://localhost:8080/member', user.value) // 이미 javascript 객체
     console.log(data)
   } catch (error) {
     console.error(error)
