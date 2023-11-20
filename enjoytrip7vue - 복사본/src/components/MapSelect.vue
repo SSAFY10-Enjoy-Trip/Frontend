@@ -66,16 +66,23 @@
         <div id="boardDetailContent" class="mt-2 p-3">
           <h3 class="suite-bold">🏄‍♂️ 코스 이름</h3>
           <input
+            v-model="tripBoardTitle"
             class="board-content mt-2 mb-4 p-2"
             placeholder="개성있는 코스 이름을 지어주세요!"
           />
 
           <h3 class="suite-bold">💖 매력 포인트</h3>
-          <textarea class="board-content mt-2 mb-4 p-2" placeholder="코스에 대해 설명해주세요" />
+          <textarea
+            v-model="tripBoardContent"
+            class="board-content mt-2 mb-4 p-2"
+            placeholder="코스에 대해 설명해주세요"
+          />
 
           <hr />
 
-          <button @click="" v-show="true" class="btn btn-success m-1">작성완료</button>
+          <button @click="insertTripBoard" v-show="true" class="btn btn-success m-1">
+            작성완료
+          </button>
         </div>
       </div>
     </div>
@@ -225,9 +232,37 @@ const changeBackground = (num) => {
   }
 }
 
+import { useRouter } from 'vue-router'
+import http from '@/common/axios.js'
+
+const router = useRouter()
+let tripBoardTitle = ref('')
+let tripBoardContent = ref('')
+
+const insertTripBoard = async () => {
+  let boardObj = {
+    title: tripBoardTitle.value,
+    content: tripBoardContent.value,
+    location: JSON.stringify(rowData)
+  }
+  try {
+    let { data } = await http.post('/tripBoard', boardObj)
+    console.log(data)
+
+    if (data.result == 'SUCCESS') {
+      // BoardView.vue 페이지 이동
+      router.push('/board')
+    } else if (data.result == 'FAIL') {
+      alert('게시판 등록 실패')
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export default {
   setup() {
-    stopoverAddres.length = 0;
+    stopoverAddres.length = 0
   },
   data() {
     return {
@@ -242,19 +277,22 @@ export default {
       rowCount,
       rowData,
       selectRow,
-      changeBackground
+      changeBackground,
+      insertTripBoard,
+      tripBoardTitle,
+      tripBoardContent
     }
   },
   mounted() {
     this.initTmap()
-    
-    rowData.rowCount = 1;
-    rowData.rowNameValue = [[]];
-    rowData.rowPositionYValue = [[]];
-    rowData.rowPositionXValue = [[]];
-    rowCount.value = 1;
-    allMakerCount.value = 0;
-    selectRow.value = 1;
+
+    rowData.rowCount = 1
+    rowData.rowNameValue = [[]]
+    rowData.rowPositionYValue = [[]]
+    rowData.rowPositionXValue = [[]]
+    rowCount.value = 1
+    allMakerCount.value = 0
+    selectRow.value = 1
   },
   methods: {
     initTmap() {
