@@ -261,8 +261,8 @@ export default {
       // 도착
       marker_e = new Tmapv2.Marker({
         position: new Tmapv2.LatLng(
-          addrX[daySelect.value][addrX.length - 1],
-          addrY[daySelect.value][addrY.length - 1]
+          addrX[daySelect.value][addrX[daySelect.value].length -1],
+          addrY[daySelect.value][addrY[daySelect.value].length -1]
         ),
         icon: 'https://cdn-icons-png.flaticon.com/512/7310/7310018.png',
         iconSize: new Tmapv2.Size(24, 38),
@@ -283,19 +283,42 @@ export default {
         headers['appKey'] = appkey
         headers['Content-Type'] = 'application/json'
 
-        var param = JSON.stringify({
-          startName: '출발지',
-          startX: addrY[daySelect.value][0].toString(),
-          startY: addrX[daySelect.value][0].toString(),
-          startTime: '201708081103',
-          endName: '도착지',
-          endX: addrY[daySelect.value][addrY.length - 1].toString(),
-          endY: addrX[daySelect.value][addrX.length - 1].toString(),
-          viaPoints: viaPoints,
-          reqCoordType: 'WGS84GEO',
-          resCoordType: 'EPSG3857',
-          searchOption: searchOption
-        })
+        var param
+        if(viaPoints.length != 0) {
+          param = JSON.stringify({
+            startName: '출발지',
+            startX: addrY[daySelect.value][0].toString(),
+            startY: addrX[daySelect.value][0].toString(),
+            startTime: '201708081103',
+            endName: '도착지',
+            endX: addrY[daySelect.value][addrY[daySelect.value].length -1].toString(),
+            endY: addrX[daySelect.value][addrX[daySelect.value].length -1].toString(),
+            viaPoints: viaPoints,
+            reqCoordType: 'WGS84GEO',
+            resCoordType: 'EPSG3857',
+            searchOption: searchOption
+          })
+        }
+        else {
+          param = JSON.stringify({
+            startName: '출발지',
+            startX: addrY[daySelect.value][0].toString(),
+            startY: addrX[daySelect.value][0].toString(),
+            startTime: '201708081103',
+            endName: '도착지',
+            endX: addrY[daySelect.value][addrY[daySelect.value].length -1].toString(),
+            endY: addrX[daySelect.value][addrX[daySelect.value].length -1].toString(),
+            viaPoints: [{
+              viaPointId: `test0`,
+              viaPointName: `name0`,
+              viaX: addrY[daySelect.value][0].toString(), // X 좌표를 문자열로 변환
+              viaY: addrX[daySelect.value][0].toString() // Y 좌표를 문자열로 변환
+            }],
+            reqCoordType: 'WGS84GEO',
+            resCoordType: 'EPSG3857',
+            searchOption: searchOption
+          })
+        }
 
         $.ajax({
           method: 'POST',
