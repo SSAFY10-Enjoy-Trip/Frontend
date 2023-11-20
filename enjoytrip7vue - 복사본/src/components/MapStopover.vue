@@ -4,7 +4,7 @@
       <tr>
         <td
           class="text-center suite-bold p-2"
-          style="background-color: #fdf7d6; width: 20%; border-radius: 8px 0px 0px 0px"
+          style="background-color: #e9fdd6; width: 20%; border-radius: 8px 0px 0px 0px"
         >
           🚩 출발
         </td>
@@ -13,7 +13,7 @@
       <tr v-for="(item, idx) in stopoverAddres" :key="idx">
         <td
           class="text-center suite-bold p-2"
-          style="background-color: #fdf7d6; width: 20%; border-radius: 0px 0px 0px 0px"
+          style="background-color: #e9fdd6; width: 20%; border-radius: 0px 0px 0px 0px"
         >
           💠 경유 {{ idx + 1 }}
         </td>
@@ -22,7 +22,7 @@
       <tr>
         <td
           class="text-center suite-bold p-2"
-          style="background-color: #fdf7d6; width: 20%; border-radius: 0px 0px 0px 8px"
+          style="background-color: #e9fdd6; width: 20%; border-radius: 0px 0px 0px 8px"
         >
           🏁 도착
         </td>
@@ -116,13 +116,15 @@ function loadGetLonLatFromAddress() {
   let tmepAddY = [
     37.402688, 37.399569, 37.402748, 37.397153, 37.410135, 37.3994, 37.406327, 37.413227, 37.414382
   ]
+  tmepAddY = location.rowPositionXValue[1]
   let tmepAddX = [
     127.103259, 127.10379, 127.108913, 127.113403, 127.12121, 127.123296, 127.130933, 127.127337,
     127.142571
   ]
+  tmepAddX = location.rowPositionYValue[1]
 
   var step
-  for (step = 0; step < tmepAddY.length - 1; step++) {
+  for (step = 0; step < tmepAddY.length; step++) {
     selectNum = step
     // TData 객체의 리버스지오코딩 함수
     tData.getAddressFromGeoJson(tmepAddY[step], tmepAddX[step], optionObj, params)
@@ -139,11 +141,35 @@ function onComplete() {
 // 앱키
 import { useKeyStore } from '@/store/appkey.js'
 
+// 서버에서 지도 좌표값 가져와버리기
+let boardNum = ref(0)
+let addrX = reactive([[]]) // 특정일의 좌표값X
+let addrY = reactive([[]]) // 특정일의 좌표값Y
+let daySelect = ref(1) // 일자 지정
+import http from '@/common/axios.js'
+let location = reactive([])
+const insertTripBoard = async () => {
+  try {
+    let { data } = await http.get('/tripBoard/' + boardNum.value)
+    location = JSON.parse(data.location)
+    for (let i = 1; i <= location.rowCount; i++) {
+      addrX.push(location.rowPositionXValue[i])
+      addrY.push(location.rowPositionYValue[i])
+    }
+
+    console.log(location)
+    console.log(addrY)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export default {
   setup() {
     stopoverAddres.length = 0
     map.value = null
   },
+  created() {},
   data() {
     return {
       selectedOption: '0',
@@ -159,11 +185,23 @@ export default {
       map: ref(''),
       resultMarkerArr: [],
       resultInfoArr: [],
-      drawInfoArr: []
+      drawInfoArr: [],
+
+      location,
+      insertTripBoard,
+      addrX,
+      addrY,
+      daySelect
     }
   },
   mounted() {
-    this.initTmap()
+    boardNum.value = this.$route.params.boardNum
+    console.log('게시글 ID:', boardNum.value)
+    insertTripBoard().then(() => {
+      // insertTripBoard가 완료되면 initTmap 호출
+      this.initTmap()
+    })
+    // this.initTmap()
   },
   methods: {
     initTmap() {
@@ -184,80 +222,55 @@ export default {
         scrollwheel: true
       })
 
+      // 경유지 정보를 담을 배열
+      let viaPoints = []
       // 2. 시작, 도착 심볼찍기
       // 시작
       marker_s = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(37.402688, 127.103259),
+        position: new Tmapv2.LatLng(addrX[daySelect.value][0], addrY[daySelect.value][0]),
         icon: 'https://static-00.iconduck.com/assets.00/location-pin-icon-385x512-fdmj5z3x.png',
         iconSize: new Tmapv2.Size(24, 38),
         map: map.value
       })
       resultMarkerArr.push(marker_s)
+
+      console.log('경유지 개수', addrX[daySelect.value].length - 1)
+      for (let i = 1; i < addrX[daySelect.value].length - 1; i++) {
+        // 3. 경유지 심볼 찍기
+        let marker = new Tmapv2.Marker({
+          position: new Tmapv2.LatLng(addrX[daySelect.value][i], addrY[daySelect.value][i]),
+          icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Flat_tick_icon.svg/1024px-Flat_tick_icon.svg.png',
+          iconSize: new Tmapv2.Size(24, 38),
+          map: map.value
+        })
+        resultMarkerArr.push(marker)
+
+        let viaPoint = {
+          viaPointId: `test${i}`,
+          viaPointName: `name${i}`,
+          viaX: addrY[daySelect.value][i].toString(), // X 좌표를 문자열로 변환
+          viaY: addrX[daySelect.value][i].toString() // Y 좌표를 문자열로 변환
+        }
+
+        // 경유지 정보를 배열에 추가
+        viaPoints.push(viaPoint)
+      }
+      console.log('삐약포인트')
+      console.log(viaPoints)
+
       // 도착
       marker_e = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(37.414382, 127.142571),
+        position: new Tmapv2.LatLng(
+          addrX[daySelect.value][addrX.length - 1],
+          addrY[daySelect.value][addrY.length - 1]
+        ),
         icon: 'https://cdn-icons-png.flaticon.com/512/7310/7310018.png',
         iconSize: new Tmapv2.Size(24, 38),
         map: map.value
       })
       resultMarkerArr.push(marker_e)
 
-      // 3. 경유지 심볼 찍기
-      let marker = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(37.399569, 127.10379),
-        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Flat_tick_icon.svg/1024px-Flat_tick_icon.svg.png',
-        iconSize: new Tmapv2.Size(24, 38),
-        map: map.value
-      })
-      resultMarkerArr.push(marker)
-
-      marker = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(37.402748, 127.108913),
-        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Flat_tick_icon.svg/1024px-Flat_tick_icon.svg.png',
-        iconSize: new Tmapv2.Size(24, 38),
-        map: map.value
-      })
-      resultMarkerArr.push(marker)
-
-      marker = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(37.397153, 127.113403),
-        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Flat_tick_icon.svg/1024px-Flat_tick_icon.svg.png',
-        iconSize: new Tmapv2.Size(24, 38),
-        map: map.value
-      })
-      resultMarkerArr.push(marker)
-
-      marker = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(37.410135, 127.12121),
-        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Flat_tick_icon.svg/1024px-Flat_tick_icon.svg.png',
-        iconSize: new Tmapv2.Size(24, 38),
-        map: map.value
-      })
-      resultMarkerArr.push(marker)
-
-      marker = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(37.3994, 127.123296),
-        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Flat_tick_icon.svg/1024px-Flat_tick_icon.svg.png',
-        iconSize: new Tmapv2.Size(24, 38),
-        map: map.value
-      })
-      resultMarkerArr.push(marker)
-
-      marker = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(37.406327, 127.130933),
-        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Flat_tick_icon.svg/1024px-Flat_tick_icon.svg.png',
-        iconSize: new Tmapv2.Size(24, 38),
-        map: map.value
-      })
-      resultMarkerArr.push(marker)
-
-      marker = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(37.413227, 127.127337),
-        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Flat_tick_icon.svg/1024px-Flat_tick_icon.svg.png',
-        iconSize: new Tmapv2.Size(24, 38),
-        map: map.value
-      })
-      resultMarkerArr.push(marker)
+      console.log(resultMarkerArr)
 
       // 4. 경로탐색 API 사용요청
       var routeLayer
@@ -272,56 +285,13 @@ export default {
 
         var param = JSON.stringify({
           startName: '출발지',
-          startX: '127.103259',
-          startY: '37.402688',
+          startX: addrY[daySelect.value][0].toString(),
+          startY: addrX[daySelect.value][0].toString(),
           startTime: '201708081103',
           endName: '도착지',
-          endX: '127.142571',
-          endY: '37.414382',
-          viaPoints: [
-            {
-              viaPointId: 'test01',
-              viaPointName: 'name01',
-              viaX: '127.103790',
-              viaY: '37.399569'
-            },
-            {
-              viaPointId: 'test02',
-              viaPointName: 'name02',
-              viaX: '127.108913',
-              viaY: '37.402748'
-            },
-            {
-              viaPointId: 'test03',
-              viaPointName: 'name03',
-              viaX: '127.113403',
-              viaY: '37.397153'
-            },
-            {
-              viaPointId: 'test04',
-              viaPointName: 'name04',
-              viaX: '127.121210',
-              viaY: '37.410135'
-            },
-            {
-              viaPointId: 'test05',
-              viaPointName: 'name05',
-              viaX: '127.123296',
-              viaY: '37.399400'
-            },
-            {
-              viaPointId: 'test06',
-              viaPointName: 'name06',
-              viaX: '127.130933',
-              viaY: '37.406327'
-            },
-            {
-              viaPointId: 'test07',
-              viaPointName: 'name07',
-              viaX: '127.127337',
-              viaY: '37.413227'
-            }
-          ],
+          endX: addrY[daySelect.value][addrY.length - 1].toString(),
+          endY: addrX[daySelect.value][addrX.length - 1].toString(),
+          viaPoints: viaPoints,
           reqCoordType: 'WGS84GEO',
           resCoordType: 'EPSG3857',
           searchOption: searchOption

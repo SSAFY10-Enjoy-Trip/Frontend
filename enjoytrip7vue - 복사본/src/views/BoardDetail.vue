@@ -23,7 +23,7 @@ const insertTripBoard = async () => {
     let { data } = await http.get('/tripBoard/' + boardNum.value)
     title.value = data.title
     content.value = data.content
-    location = JSON.parse(data.location)
+    location = data.location
     allLocation.value = data.allLocation
     regDt.value = data.regDt.replace('T', ' ')
     readCount.value = data.readCount
@@ -31,13 +31,12 @@ const insertTripBoard = async () => {
     memberId.value = data.memberId
     memberProfileImageUrl.value = data.memberProfileImageUrl
 
-    console.log(data)
-    console.log(data.location)
+    // console.log(data)
+    // console.log(data.location)
   } catch (error) {
     console.log(error)
   }
 }
-
 export default {
   setup() {},
   data() {
