@@ -19,12 +19,48 @@ export default {
 </script>
 
 <template>
+  <div class="mb-3">
+    <div
+      class="p-5"
+      style="
+        background: url('/src/assets/travel_main_bar2.gif') no-repeat;
+        width: 100%;
+        background-size: cover;
+      "
+    >
+      <section class="">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="block text-center">
+                <span class="text-white">Our services</span>
+                <h1
+                  class="text-capitalize mb-4 text-lg"
+                  style="text-shadow: 1px 7px 20px rgba(255, 255, 255, 0.9)"
+                >
+                  Share your journey
+                </h1>
+                <ul class="list-inline">
+                  <li class="list-inline-item"><a href="#" class="text-white">Home</a></li>
+                  <li class="list-inline-item"><span class="text-white">/</span></li>
+                  <li class="list-inline-item">
+                    <a href="#" class="text-white-50">Our services</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- <img class="mb-4" src="../assets/travel_main_bar.gif" alt="" style="width: 100%" /> -->
+    </div>
+  </div>
   <div class="row">
-    <div class="col-lg-1 col-xl-2"></div>
-    <div class="col-12 col-sm-12 col-md-3 col col-lg-3 col-xl-2">
+    <div class="col-xl-1"></div>
+    <div class="col-12 col-sm-12 col-md-3 col col-lg-3 col-xl-3">
       <side-page></side-page>
     </div>
-    <div class="col-12 col-sm-12 col-md-9 col col-lg-7 col-xl-6">
+    <div class="col-12 col-sm-12 col-md-9 col col-lg-9 col-xl-7">
       <div class="mt-2" @click="navigateToBoardAll">
         <div class="board-content">
           <h3 class="jalnan-gothic" style="display: inline">🛫전체글</h3>
@@ -51,7 +87,7 @@ export default {
         <board-value></board-value>
       </div>
     </div>
-    <div class="col-lg-1 col-xl-2"></div>
+    <div class="col-xl-1"></div>
   </div>
 </template>
 

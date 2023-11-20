@@ -1,31 +1,40 @@
 <template>
   <div
-    v-for="(item, index) in items"
+    v-for="(item, index) in boardId"
     :key="index"
-    @click="showBoardDetail(item.num)"
+    @click="showBoardDetail(boardId[index])"
     class="m-2 suite-regular board-content p-3"
   >
     <div class="row">
       <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-        <h4 class="suite-bold">{{ item.title }}</h4>
+        <h4 class="suite-bold">{{ title[index] }}</h4>
       </div>
       <div
         class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12"
         style="display: flex; align-items: flex-end; justify-content: flex-end"
       >
-        {{ item.author }} | {{ item.time }} | 조회 {{ item.views }}
+        {{ memberName[index] }} | {{ regDt[index] }} | 조회 {{ readCount[index] }}
       </div>
     </div>
 
     <hr />
     <div class="row">
-      <div><span class="suite-bold">🚩 출발 : </span> {{ item.departure }}</div>
-      <div><span class="suite-bold">🏁 도착 : </span> {{ item.destination }}</div>
+      <div><span class="suite-bold">🚩 출발 : </span> {{ location[index].rowNameValue[1][0] }}</div>
+      <div>
+        <span class="suite-bold">🏁 도착 : </span>
+        {{
+          location[index].rowNameValue[location[index].rowCount][
+            location[index].rowNameValue[location[index].rowCount].length - 1
+          ]
+        }}
+      </div>
     </div>
     <div class="row">
-      <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">🕑 여행일 : {{ item.day }} 일</div>
       <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
-        👜 경유지 : {{ item.waypoints }} 개
+        🕑 여행일 : {{ location[index].rowCount }} 일
+      </div>
+      <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+        👜 경유지 : {{ allLocation[index] }} 개
       </div>
     </div>
   </div>
@@ -33,64 +42,98 @@
 
 <script>
 import { useRouter } from 'vue-router'
+import { reactive } from 'vue'
 import http from '@/common/axios.js'
 
+let boardId = reactive([])
+let title = reactive([])
+let content = reactive([])
+let location = reactive([])
+let allLocation = reactive([])
+let regDt = reactive([])
+let readCount = reactive([])
+let memberName = reactive([])
+let memberId = reactive([])
+let memberProfileImageUrl = reactive([])
 const router = useRouter()
 const insertTripBoard = async () => {
   try {
     let { data } = await http.get('/tripBoard')
     console.log(data)
+    let cnt = 0
+    data.forEach((row) => {
+      boardId.push(row.boardId)
+      title.push(row.title)
+      content.push(row.content)
+      location.push(JSON.parse(row.location))
+      let sum = 0
+      console.log(location[cnt].rowCount)
+      for (let i = 1; i < location[cnt].rowCount; i++) {
+        sum += location[cnt].rowNameValue[i].length
+      }
+      allLocation.push(sum)
+      regDt.push(timeForToday(row.regDt))
+      readCount.push(row.readCount)
+      memberName.push(row.member.name)
+      memberId.push(row.memberId)
+      memberProfileImageUrl.push(row.memberProfileImageUrl)
+      cnt++
+    })
+    console.log(location)
   } catch (error) {
     console.log(error)
   }
 }
+
+function timeForToday(value) {
+  const today = new Date()
+  const timeValue = new Date(value)
+
+  const betweenTime = Math.floor((today.getTime() - timeValue.getTime()) / 1000 / 60)
+  if (betweenTime < 1) return '방금 전'
+  if (betweenTime < 60) {
+    return `${betweenTime}분 전`
+  }
+
+  const betweenTimeHour = Math.floor(betweenTime / 60)
+  if (betweenTimeHour < 24) {
+    return `${betweenTimeHour}시간 전`
+  }
+
+  const betweenTimeDay = Math.floor(betweenTime / 60 / 24)
+  if (betweenTimeDay < 365) {
+    return `${betweenTimeDay}일 전`
+  }
+
+  return `${Math.floor(betweenTimeDay / 365)}년 전`
+}
+
 export default {
   setup() {
     insertTripBoard()
+    boardId.length = 0
+    title.length = 0
+    content.length = 0
+    location.length = 0
+    allLocation.length = 0
+    regDt.length = 0
+    readCount.length = 0
+    memberName.length = 0
+    memberId.length = 0
+    memberProfileImageUrl.length = 0
   },
   data() {
     return {
-      items: [
-        {
-          title: '반짝반짝 빛 따라 걸어요!',
-          num: 1,
-          author: '김철수',
-          time: '5분 전',
-          views: 52,
-          departure: '부산 사하구 다대로 548',
-          destination: '부산 사하구 장림시장9길 54',
-          waypoints: '5',
-          duration: '3시간',
-          cost: '1800',
-          day: 3
-        },
-        {
-          title: '먹부림 하면 서면 아이가!',
-          num: 2,
-          author: '신호동 보안관',
-          time: '12분 전',
-          views: 23,
-          departure: '부산 부산진구 동천로 61 1층',
-          destination: '부산 부산진구 중앙대로 680번길 45-9 3층 모던테이블',
-          waypoints: '2',
-          duration: '48분',
-          cost: '0',
-          day: 1
-        },
-        {
-          title: '걸어서 다니는 가로수길 데이트',
-          num: 3,
-          author: '낭낭',
-          time: '1시간 전',
-          views: 172,
-          departure: '서울 강남구 가로수길 43',
-          destination: '서울 서초구 사평대로 365 지하1층',
-          waypoints: '1',
-          duration: '28분',
-          cost: '0',
-          day: 2
-        }
-      ]
+      boardId,
+      title,
+      content,
+      location,
+      allLocation,
+      memberName,
+      memberId,
+      memberProfileImageUrl,
+      regDt,
+      readCount
     }
   },
   methods: {

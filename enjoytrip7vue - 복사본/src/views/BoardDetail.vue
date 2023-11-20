@@ -22,11 +22,11 @@ export default {
 
 <template>
   <div class="row">
-    <div class="col-lg-1 col-xl-2"></div>
+    <div class="col-xl-2"></div>
     <div class="col-12 col-sm-12 col-md-3 col col-lg-3 col-xl-2">
       <side-page></side-page>
     </div>
-    <div class="col-12 col-sm-12 col-md-9 col col-lg-7 col-xl-6">
+    <div class="col-12 col-sm-12 col-md-9 col col-lg-9 col-xl-6">
       <div id="boardDetailContent" class="mt-2 p-3">
         <h1>글제목</h1>
         <h5>작성자 : 김철수 | 작성일 : 2023.12.10 | 조회수 : 53 | 담기 : 23</h5>
@@ -115,7 +115,7 @@ export default {
         </div>
       </div>
     </div>
-    <div class="col-lg-1 col-xl-2"></div>
+    <div class="col-xl-2"></div>
   </div>
 </template>
 
@@ -155,7 +155,8 @@ h5 {
 }
 
 #boardDetailContent {
-  border: 1px solid #888;
+  border: 1px solid #bbb;
+  border-radius: 10px;
 }
 .comment-btn {
   border: none;
