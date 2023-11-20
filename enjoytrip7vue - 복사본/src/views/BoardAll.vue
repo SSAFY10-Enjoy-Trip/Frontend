@@ -1,5 +1,5 @@
 <script setup>
-import BoardPage from '@/components/BoardPage.vue'
+import BoardAllPage from '../components/BoardAllPage.vue'
 import SidePage from './SidPage.vue'
 </script>
 
@@ -15,7 +15,7 @@ import SidePage from './SidPage.vue'
           <h3 class="jalnan-gothic" style="display: inline">🛫전체글</h3>
         </div>
         <hr />
-        <board-page></board-page>
+        <board-all-page></board-all-page>
       </div>
     </div>
     <div class="col-lg-1 col-xl-2"></div>
