@@ -46,9 +46,11 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
 import {ref} from 'vue';
 import axios from 'axios'
 
+const router = useRouter();
 const user = ref({});
 
 const clear = () => {
@@ -63,7 +65,9 @@ const register = async () => {
   try {
     console.log(user.value);
     let {data} = await axios.post('http://localhost:8080/member', user.value) // 이미 javascript 객체
-    console.log(data)
+    if(data.register === 'success'){
+      router.replace('/login')
+    }
   } catch (error) {
     console.error(error)
   }

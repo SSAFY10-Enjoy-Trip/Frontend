@@ -53,7 +53,7 @@ const clear = () => {
 // props로 isLogin 정보 받아서 login/logout 처리 후 isLogin을 true/false 처리 해야한다.
 const login = async () => {
   try {
-    let {data} = await axios.post('http://localhost:8080/axios/login', user.value) // 이미 javascript 객체
+    let {data} = await axios.post('http://localhost:8080/login', user.value) // 이미 javascript 객체
     console.log(data)
     clear();
     if(data.login === 'success'){
