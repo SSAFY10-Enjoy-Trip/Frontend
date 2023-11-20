@@ -29,10 +29,10 @@
         <ul class="navbar-nav ms-5 mb-2 mb-lg-0">
           <!-- 이미지 noProfile.png, userProfileImageUrl -->
           <!-- 로그아웃, 로그인 중 한개가 베타적으로 보이도록 -->
-          <li class="nav-item" v-show="isLogin">
-            <a class="nav-link" @click="logout"> 로그아웃 </a>
+          <li class="nav-item" v-show="authStore.isLogin">
+            <a class="nav-link" @click="logout">{{ authStore.name }} 로그아웃 </a>
           </li>
-          <li class="nav-item" v-show="!isLogin">
+          <li class="nav-item" v-show="!authStore.isLogin">
             <router-link to="/login" class="nav-link">로그인</router-link>
           </li>
         </ul>
@@ -42,27 +42,9 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
-import axios from 'axios';
+import {useAuthStore} from '@/store/authStore.js';
+const {authStore, logout} = useAuthStore()
 
-const router = useRouter();
-
-
-defineProps(['isLogin'])
-const emit = defineEmits([
-  'call-is-login'
-])
-
-const logout = async () => {
-  try {
-    await axios.get('http://localhost:8080/axios/logout') // 이미 javascript 객체
-    sessionStorage.setItem('login', 'fail');
-    emit('call-is-login', false);
-    router.push('/login');
-  } catch (error) {
-    console.error(error)
-  }
-}
 </script>
 
 <style scoped>

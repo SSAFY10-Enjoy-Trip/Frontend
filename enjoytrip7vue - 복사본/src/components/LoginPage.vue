@@ -12,7 +12,7 @@
             aria-label="Sizing example input"
             aria-describedby="inputGroup-sizing-sm"
             name="email"
-            v-model="user.email"
+            v-model="authStore.email"
           />
         </div>
         <div class="input-group input-group-sm mb-3">
@@ -23,7 +23,7 @@
             aria-label="Sizing example input"
             aria-describedby="inputGroup-sizing-sm"
             name="password"
-            v-model="user.password"
+            v-model="authStore.password"
           />
         </div>
         <div class="d-grid gap-2 d-md-block">
@@ -40,35 +40,32 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import http from '@/common/axios.js'
-import { ref } from 'vue'
+import { useAuthStore } from '@/store/authStore.js'
 
+const { authStore, setLogin } = useAuthStore()
 const router = useRouter()
 
-const user = ref({})
-const clear = () => {
-  user.value = {
-    email: '',
-    password: ''
-  }
+let loginObj = {
+  email: authStore.email,
+  password: authStore.password
 }
 
 // props로 isLogin 정보 받아서 login/logout 처리 후 isLogin을 true/false 처리 해야한다.
 const login = async () => {
   try {
-    let { data } = await http.post('http://localhost:8080/login', user.value) // 이미 javascript 객체
+    let { data } = await http.post('http://localhost:8080/login', loginObj) // 이미 javascript 객체
     console.log(data)
-    clear()
-    if (data.login === 'success') {
-      sessionStorage.setItem('login', 'success')
-      emit('call-is-login', true)
+    console.log(data.name);
+    if (data.login == 'success') {
+      setLogin({ isLogin: true, name: data.name, profileImageUrl: data.profileImageUrl });
       router.push('/')
-    } else {
-      emit('call-is-login', false)
+    } else if( data.login == "fail" ){
+      alert('이메일 또는 비밀번호를 확인하세요.');
     }
   } catch (error) {
     console.error(error)
+    alert('로그인 과정에서 오류가 발생했습니다.');
   }
 }
 
-const emit = defineEmits(['call-is-login'])
 </script>

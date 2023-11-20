@@ -65,7 +65,7 @@ const register = async () => {
   try {
     console.log(user.value);
     let {data} = await axios.post('http://localhost:8080/member', user.value) // 이미 javascript 객체
-    if(data.register === 'success'){
+    if(data.register == 'success'){
       router.replace('/login')
     }
   } catch (error) {
