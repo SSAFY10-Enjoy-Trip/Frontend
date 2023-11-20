@@ -249,10 +249,11 @@ const insertTripBoard = async () => {
     let { data } = await http.post('/tripBoard', boardObj)
     console.log(data)
 
-    if (data.result == 'SUCCESS') {
+    if (data.board == 'SUCCESS') {
       // BoardView.vue 페이지 이동
-      router.push('/board')
-    } else if (data.result == 'FAIL') {
+      // router.push('/board')
+      this.$router.push({ path: '/bordAll' });
+    } else if (data.board == 'FAIL') {
       alert('게시판 등록 실패')
     }
   } catch (error) {
