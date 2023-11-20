@@ -4,12 +4,74 @@ import SidePage from './SidPage.vue'
 </script>
 
 <script>
+import { ref, reactive } from 'vue'
+let boardNum = ref(0)
+import http from '@/common/axios.js'
+
+let boardId = ref(0)
+let title = ref('')
+let content = ref('')
+let location = reactive([])
+let allLocation = ref(0)
+let regDt = ref('')
+let readCount = ref('')
+let memberName = ref('')
+let memberId = ref(0)
+let memberProfileImageUrl = ref('')
+const insertTripBoard = async () => {
+  try {
+    let { data } = await http.get('/tripBoard/' + boardNum.value)
+    title.value = data.title
+    content.value = data.content
+    location = JSON.parse(data.location)
+    allLocation.value = data.allLocation
+    regDt.value = data.regDt.replace('T', ' ')
+    readCount.value = data.readCount
+    memberName.value = data.member.name
+    memberId.value = data.memberId
+    memberProfileImageUrl.value = data.memberProfileImageUrl
+
+    console.log(data)
+    console.log(data.location)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export default {
+  setup() {},
+  data() {
+    return {
+      boardId,
+      title,
+      content,
+      location,
+      allLocation,
+      memberName,
+      memberId,
+      memberProfileImageUrl,
+      regDt,
+      readCount
+    }
+  },
   created() {
     // 동적 세그먼트의 값인 boardNum을 읽어옴
-    const boardNum = this.$route.params.boardNum
+    boardNum.value = this.$route.params.boardNum
     // 서버에게 boardNum을 전달
-    this.fetchDataFromServer(boardNum)
+    this.fetchDataFromServer(boardNum.value)
+    console.log('게시글 ID:', boardNum.value)
+
+    // boardId = 0
+    // title = ''
+    // content = ''
+    // location.length = 0
+    // allLocation = 0
+    // regDt = ''
+    // readCount = 0
+    // memberName = ''
+    // memberId = 0
+    // memberProfileImageUrl = ''
+    insertTripBoard()
   },
   methods: {
     fetchDataFromServer(boardNum) {
@@ -22,20 +84,22 @@ export default {
 
 <template>
   <div class="row">
-    <div class="col-xl-2"></div>
+    <div class="col-xl-1"></div>
     <div class="col-12 col-sm-12 col-md-3 col col-lg-3 col-xl-2">
       <side-page></side-page>
     </div>
-    <div class="col-12 col-sm-12 col-md-9 col col-lg-9 col-xl-6">
+    <div class="col-12 col-sm-12 col-md-9 col col-lg-9 col-xl-8">
       <div id="boardDetailContent" class="mt-2 p-3">
-        <h1>글제목</h1>
-        <h5>작성자 : 김철수 | 작성일 : 2023.12.10 | 조회수 : 53 | 담기 : 23</h5>
+        <h1>{{ title }}</h1>
+        <h5>
+          작성자 : {{ memberName }} | 작성일 : {{ regDt }} | 조회수 : {{ readCount }} | 담기 : 23
+        </h5>
         <hr />
 
         <map-stopover></map-stopover>
 
         <h3 class="suite-bold">매력 포인트</h3>
-        <div class="board-content mt-2 p-2">여기에 여행지 코멘트 나와야 합니다.</div>
+        <div class="board-content mt-2 p-2">{{ content }}</div>
 
         <div class="mt-5">
           <img
@@ -115,7 +179,7 @@ export default {
         </div>
       </div>
     </div>
-    <div class="col-xl-2"></div>
+    <div class="col-xl-1"></div>
   </div>
 </template>
 

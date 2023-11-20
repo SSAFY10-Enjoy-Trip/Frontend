@@ -133,7 +133,7 @@ function onComplete() {
   resultAddress.value = this._responseData.addressInfo.fullAddress //출력될 결과 주소 정보 입니다.
   var result = '현재 지도의 중심 좌표주소 : ' + resultAddress.value + ' : ' + selectNum
   stopoverAddres.push(resultAddress.value)
-  console.log(stopoverAddres)
+  // console.log(stopoverAddres)
 }
 
 // 앱키
@@ -336,7 +336,7 @@ export default {
           success: function (response) {
             var resultData = response.properties
             var resultFeatures = response.features
-            console.log(resultFeatures)
+            // console.log(resultFeatures)
 
             // 결과 출력
             var tDistance = '총 거리 : ' + (resultData.totalDistance / 1000).toFixed(1) + 'km,  '
