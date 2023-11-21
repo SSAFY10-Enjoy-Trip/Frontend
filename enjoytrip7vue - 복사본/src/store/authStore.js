@@ -14,8 +14,8 @@ export const useAuthStore = defineStore('authStore', () => {
     profileImageUrl: notLoginUserProfileImageUrl,
 
     // Login
-    email: "test",
-    password: "test",
+    email: '',
+    password: '',
   })
 
   // getter 는 생략 직접 사용하는 걸로
@@ -27,6 +27,9 @@ export const useAuthStore = defineStore('authStore', () => {
     authStore.isLogin = payload.isLogin;
     authStore.name = payload.name;
     authStore.profileImageUrl = payload.profileImageUrl;
+
+    // 로그인 후 로그인 화면에 비밀번호 남아있는 것 지우기
+    authStore.password = '';
     // console.log(authStore)
   }
 

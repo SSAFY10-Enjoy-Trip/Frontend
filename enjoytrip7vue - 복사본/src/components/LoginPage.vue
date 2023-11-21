@@ -45,25 +45,24 @@ import { useAuthStore } from '@/store/authStore.js'
 const { authStore, setLogin } = useAuthStore()
 const router = useRouter()
 
-let loginObj = {
-  email: authStore.email,
-  password: authStore.password
-}
-
 // props로 isLogin 정보 받아서 login/logout 처리 후 isLogin을 true/false 처리 해야한다.
 const login = async () => {
+  let loginObj = {
+    email: authStore.email,
+    password: authStore.password
+  }
+
   try {
     let { data } = await http.post('http://localhost:8080/login', loginObj) // 이미 javascript 객체
     if (data.result == 'success') {
-      setLogin({ isLogin: true, name: data.name, profileImageUrl: data.profileImageUrl });
+      setLogin({ isLogin: true, name: data.name, profileImageUrl: data.profileImageUrl })
       router.push('/')
-    } else if( data.result == "fail" ){
-      alert('이메일 또는 비밀번호를 확인하세요.');
+    } else if (data.result == 'fail') {
+      alert('이메일 또는 비밀번호를 확인하세요.')
     }
   } catch (error) {
     console.error(error)
-    alert('로그인 과정에서 오류가 발생했습니다.');
+    alert('로그인 과정에서 오류가 발생했습니다.')
   }
 }
-
 </script>
