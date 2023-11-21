@@ -69,7 +69,8 @@ export default {
       regDt,
       readCount,
 
-      likeImage: false
+      likeImage: false,
+      isMine: false
     }
   },
   created() {
@@ -79,6 +80,7 @@ export default {
     this.fetchDataFromServer(boardNum.value)
     console.log('게시글 ID:', boardNum.value)
     this.heartCheck()
+    this.writerCheck()
 
     // boardId = 0
     // title = ''
@@ -146,6 +148,19 @@ export default {
             } catch (error) {
               console.log(error)
             }
+          },
+    async writerCheck() {
+            let boardObj = {
+              boardId: boardNum.value
+            }
+            try {
+              let { data } = await http.post('/tripBoard/check', boardObj)
+              console.log("Q. 이거 내 글이다? => ", data)
+
+              this.isMine = data
+            } catch (error) {
+              console.log(error)
+            }
           }
   }
 }
@@ -201,8 +216,8 @@ export default {
 
         <button @click="" v-show="true" class="btn btn-success m-1">글작성</button>
         <button @click="" class="btn btn-light m-1">공유</button>
-        <button @click="" v-show="true" class="btn btn-light m-1">수정</button>
-        <button @click="" v-show="true" class="btn btn-light m-1">삭제</button>
+        <button @click="" v-show="isMine"  class="btn btn-light m-1">수정</button>
+        <button @click="" v-show="isMine"  class="btn btn-light m-1">삭제</button>
         <hr />
         <h5>댓글 작성</h5>
         <div class="row mb-3" style="height: 3.4em">
