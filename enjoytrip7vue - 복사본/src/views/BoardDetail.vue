@@ -1,12 +1,18 @@
 <script setup>
 import MapStopover from '@/components/MapStopover.vue'
 import SidePage from './SidPage.vue'
+import { useAuthStore } from '@/store/authStore'
+const { authStore } = useAuthStore()
+console.log('어쓰쓰토아', authStore.isLogin)
+isLogin.value = authStore.isLogin
 </script>
 
 <script>
 import { ref, reactive } from 'vue'
 let boardNum = ref(0)
 import http from '@/common/axios.js'
+
+let isLogin = ref(true)
 
 let boardId = ref(0)
 let title = ref('')
@@ -61,7 +67,9 @@ export default {
       memberId,
       memberProfileImageUrl,
       regDt,
-      readCount
+      readCount,
+
+      likeImage: false
     }
   },
   created() {
@@ -87,6 +95,25 @@ export default {
     fetchDataFromServer(boardNum) {
       // 서버에게 boardNum을 전달하고 데이터를 가져오는 비동기 작업 수행
       // axios 코드 작성 위치
+    },
+    clickLike() {
+      // 스토어 인스턴스 가져오기
+
+      // 좋아요 했으면
+      if (this.likeImage == true) {
+        // 로그인 했으면
+        if (isLogin.value == true) {
+          this.likeImage = !this.likeImage
+        }
+        // 로그인 안 했으면
+        else {
+          alert('로그인이 필요한 서비스 입니다.')
+        }
+      }
+      // 좋아요 해제 했으면
+      else {
+        this.likeImage = !this.likeImage
+      }
     }
   }
 }
@@ -119,11 +146,20 @@ export default {
           <span class="comment-user">차차핑</span>
           <span>님의 글 더보기</span> <br />
           <div class="vertical-centering mt-2">
-            <img id="likeBtn" src="../assets/like_fill.png" />
+            <button class="likeBtnBack" @click="clickLike">
+              <img
+                v-if="likeImage"
+                class="likeBtn shine"
+                src="../assets/like_fill.png"
+                alt="Image 1"
+              />
+              <img v-else class="likeBtn" src="../assets/like_blank.png" alt="Image 2" />
+            </button>
+
             <span class="suite-regular left-space-3">좋아요</span>
             <span class="suite-bold left-space-3"> 28</span>
             <span class="suite-regular left-space-6"></span>
-            <img id="likeBtn" src="../assets/comment.png" />
+            <img class="likeBtn" src="../assets/comment.png" />
             <span class="suite-regular left-space-3">댓글</span>
             <span class="suite-bold left-space-3"> 2</span>
           </div>
@@ -269,7 +305,36 @@ h5 {
   border-radius: 4px;
 }
 
-#likeBtn {
+.likeBtn {
   height: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.likeBtnBack {
+  background-color: #00000000;
+  border: 0px solid #fff;
+  padding: 0;
+  margin: 0;
+}
+
+/* 무빙해라 좋아요 */
+.shine {
+  animation: shine 0.8s ease alternate;
+}
+@keyframes shine {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  80% {
+    opacity: 0.6;
+    transform: scale(3);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 </style>
