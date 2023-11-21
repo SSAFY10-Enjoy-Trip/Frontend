@@ -98,11 +98,11 @@ export default {
       // axios 코드 작성 위치
     },
     clickLike() {
-      // 스토어 인스턴스 가져오기
-
       // 좋아요 했으면
       if (this.likeImage == false) {
         // 로그인 했으면
+        console.log("여기다요")
+        console.log(isLogin.value)
         if (isLogin.value == true) {
           this.likeImage = !this.likeImage
           this.heartUpdate()
@@ -140,9 +140,9 @@ export default {
             }
             try {
               let { data } = await http.post('/like/check', boardObj)
-              console.log(data)
+              console.log("Q. 나는 좋아요를 했다? => ", data)
 
-              isLogin.value = data
+              this.likeImage = data
             } catch (error) {
               console.log(error)
             }
