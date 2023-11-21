@@ -54,12 +54,10 @@ let loginObj = {
 const login = async () => {
   try {
     let { data } = await http.post('http://localhost:8080/login', loginObj) // 이미 javascript 객체
-    console.log(data)
-    console.log(data.name);
-    if (data.login == 'success') {
+    if (data.result == 'success') {
       setLogin({ isLogin: true, name: data.name, profileImageUrl: data.profileImageUrl });
       router.push('/')
-    } else if( data.login == "fail" ){
+    } else if( data.result == "fail" ){
       alert('이메일 또는 비밀번호를 확인하세요.');
     }
   } catch (error) {
