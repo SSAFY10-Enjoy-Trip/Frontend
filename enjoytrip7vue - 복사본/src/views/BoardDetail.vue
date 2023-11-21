@@ -78,6 +78,7 @@ export default {
     // 서버에게 boardNum을 전달
     this.fetchDataFromServer(boardNum.value)
     console.log('게시글 ID:', boardNum.value)
+    this.heartCheck()
 
     // boardId = 0
     // title = ''
@@ -100,10 +101,11 @@ export default {
       // 스토어 인스턴스 가져오기
 
       // 좋아요 했으면
-      if (this.likeImage == true) {
+      if (this.likeImage == false) {
         // 로그인 했으면
         if (isLogin.value == true) {
           this.likeImage = !this.likeImage
+          this.heartUpdate()
         }
         // 로그인 안 했으면
         else {
@@ -113,8 +115,38 @@ export default {
       // 좋아요 해제 했으면
       else {
         this.likeImage = !this.likeImage
+        this.heartUpdate()
       }
-    }
+    },
+    async heartUpdate() {
+            let boardObj = {
+              boardId: boardNum.value
+            }
+            try {
+              let { data } = await http.post('/like', boardObj)
+              console.log(data)
+
+              if (data.result == 'success') {
+              } else if (data.board == 'fail') {
+                alert('업데이트 오류가 발생했습니다.')
+              }
+            } catch (error) {
+              console.log(error)
+            }
+          },
+    async heartCheck() {
+            let boardObj = {
+              boardId: boardNum.value
+            }
+            try {
+              let { data } = await http.post('/like/check', boardObj)
+              console.log(data)
+
+              isLogin.value = data
+            } catch (error) {
+              console.log(error)
+            }
+          }
   }
 }
 </script>
