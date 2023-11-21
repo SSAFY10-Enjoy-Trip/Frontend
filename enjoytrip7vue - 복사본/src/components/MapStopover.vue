@@ -1,32 +1,15 @@
 <template>
+  <!-- <p>{{ locationX }}</p> -->
   <div class="row suite-regular map-result m-1">
     <table>
-      <tr>
-        <td
-          class="text-center suite-bold p-2"
-          style="background-color: #e9fdd6; width: 20%; border-radius: 8px 0px 0px 0px"
-        >
-          🚩 출발
-        </td>
-        <td class="p-2">여기는 출발 주소가 나와야해요 {{ startAddres }}</td>
-      </tr>
       <tr v-for="(item, idx) in stopoverAddres" :key="idx">
         <td
           class="text-center suite-bold p-2"
           style="background-color: #e9fdd6; width: 20%; border-radius: 0px 0px 0px 0px"
         >
-          💠 경유 {{ idx + 1 }}
+          💠 장소 {{ idx + 1 }}
         </td>
         <td class="p-2">{{ item }}</td>
-      </tr>
-      <tr>
-        <td
-          class="text-center suite-bold p-2"
-          style="background-color: #e9fdd6; width: 20%; border-radius: 0px 0px 0px 8px"
-        >
-          🏁 도착
-        </td>
-        <td class="p-2">여기는 도착 주소가 나와야해요 {{ endAddres }}</td>
       </tr>
     </table>
   </div>
@@ -146,28 +129,24 @@ let boardNum = ref(0)
 let addrX = reactive([[]]) // 특정일의 좌표값X
 let addrY = reactive([[]]) // 특정일의 좌표값Y
 let daySelect = ref(1) // 일자 지정
-import http from '@/common/axios.js'
 let location = reactive([])
-const insertTripBoard = async () => {
-  try {
-    let { data } = await http.get('/tripBoard/' + boardNum.value)
-    location = JSON.parse(data.location)
-    for (let i = 1; i <= location.rowCount; i++) {
-      addrX.push(location.rowPositionXValue[i])
-      addrY.push(location.rowPositionYValue[i])
-    }
-
-    console.log(location)
-    console.log(addrY)
-  } catch (error) {
-    console.log(error)
-  }
-}
 
 export default {
+  props: {
+    locationX: Array,
+    locationY: Array
+  },
+  computed: {
+    // props로 받은 배열을 computed 속성을 이용하여 사용
+    locationX() {
+      return this.locationX
+    },
+    locationY() {
+      return this.locationY
+    }
+  },
   setup() {
     stopoverAddres.length = 0
-    map.value = null
   },
   created() {},
   data() {
@@ -182,13 +161,12 @@ export default {
       stopoverAddres,
       endAddres,
 
-      map: ref(''),
+      map,
       resultMarkerArr: [],
       resultInfoArr: [],
       drawInfoArr: [],
 
       location,
-      insertTripBoard,
       addrX,
       addrY,
       daySelect
@@ -197,10 +175,7 @@ export default {
   mounted() {
     boardNum.value = this.$route.params.boardNum
     console.log('게시글 ID:', boardNum.value)
-    insertTripBoard().then(() => {
-      // insertTripBoard가 완료되면 initTmap 호출
-      this.initTmap()
-    })
+    setTimeout(this.initTmap, 100)
     // this.initTmap()
   },
   methods: {
@@ -209,12 +184,16 @@ export default {
         mapDiv.value.innerHTML = '' // Clearing the content
       }
 
+      location = this.locationX
+      addrX = this.locationX.rowPositionXValue
+      addrY = this.locationX.rowPositionYValue
       loadGetLonLatFromAddress()
       resultMarkerArr = []
 
+      console.log(location)
       // 1. 지도 띄우기
       map.value = new Tmapv2.Map('map_div', {
-        center: new Tmapv2.LatLng(37.405278291509404, 127.12074279785197),
+        center: new Tmapv2.LatLng(addrX[daySelect.value][0], addrY[daySelect.value][0]),
         width: '100%',
         height: '400px',
         zoom: 14,
@@ -261,8 +240,8 @@ export default {
       // 도착
       marker_e = new Tmapv2.Marker({
         position: new Tmapv2.LatLng(
-          addrX[daySelect.value][addrX[daySelect.value].length -1],
-          addrY[daySelect.value][addrY[daySelect.value].length -1]
+          addrX[daySelect.value][addrX[daySelect.value].length - 1],
+          addrY[daySelect.value][addrY[daySelect.value].length - 1]
         ),
         icon: 'https://cdn-icons-png.flaticon.com/512/7310/7310018.png',
         iconSize: new Tmapv2.Size(24, 38),
@@ -284,36 +263,37 @@ export default {
         headers['Content-Type'] = 'application/json'
 
         var param
-        if(viaPoints.length != 0) {
+        if (viaPoints.length != 0) {
           param = JSON.stringify({
             startName: '출발지',
             startX: addrY[daySelect.value][0].toString(),
             startY: addrX[daySelect.value][0].toString(),
             startTime: '201708081103',
             endName: '도착지',
-            endX: addrY[daySelect.value][addrY[daySelect.value].length -1].toString(),
-            endY: addrX[daySelect.value][addrX[daySelect.value].length -1].toString(),
+            endX: addrY[daySelect.value][addrY[daySelect.value].length - 1].toString(),
+            endY: addrX[daySelect.value][addrX[daySelect.value].length - 1].toString(),
             viaPoints: viaPoints,
             reqCoordType: 'WGS84GEO',
             resCoordType: 'EPSG3857',
             searchOption: searchOption
           })
-        }
-        else {
+        } else {
           param = JSON.stringify({
             startName: '출발지',
             startX: addrY[daySelect.value][0].toString(),
             startY: addrX[daySelect.value][0].toString(),
             startTime: '201708081103',
             endName: '도착지',
-            endX: addrY[daySelect.value][addrY[daySelect.value].length -1].toString(),
-            endY: addrX[daySelect.value][addrX[daySelect.value].length -1].toString(),
-            viaPoints: [{
-              viaPointId: `test0`,
-              viaPointName: `name0`,
-              viaX: addrY[daySelect.value][0].toString(), // X 좌표를 문자열로 변환
-              viaY: addrX[daySelect.value][0].toString() // Y 좌표를 문자열로 변환
-            }],
+            endX: addrY[daySelect.value][addrY[daySelect.value].length - 1].toString(),
+            endY: addrX[daySelect.value][addrX[daySelect.value].length - 1].toString(),
+            viaPoints: [
+              {
+                viaPointId: `test0`,
+                viaPointName: `name0`,
+                viaX: addrY[daySelect.value][0].toString(), // X 좌표를 문자열로 변환
+                viaY: addrX[daySelect.value][0].toString() // Y 좌표를 문자열로 변환
+              }
+            ],
             reqCoordType: 'WGS84GEO',
             resCoordType: 'EPSG3857',
             searchOption: searchOption

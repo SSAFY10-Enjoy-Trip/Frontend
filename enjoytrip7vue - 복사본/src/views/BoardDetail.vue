@@ -18,6 +18,9 @@ let readCount = ref('')
 let memberName = ref('')
 let memberId = ref(0)
 let memberProfileImageUrl = ref('')
+
+let locationX = []
+let locationY = []
 const insertTripBoard = async () => {
   try {
     let { data } = await http.get('/tripBoard/' + boardNum.value)
@@ -31,6 +34,8 @@ const insertTripBoard = async () => {
     memberId.value = data.memberId
     memberProfileImageUrl.value = data.memberProfileImageUrl
 
+    locationX = JSON.parse(location)
+    locationY = JSON.parse(location).rowPositionYValue
     // console.log(data)
     // console.log(data.location)
   } catch (error) {
@@ -39,8 +44,14 @@ const insertTripBoard = async () => {
 }
 export default {
   setup() {},
+  components: {
+    MapStopover
+  },
   data() {
     return {
+      locationX,
+      locationY,
+
       boardId,
       title,
       content,
@@ -95,7 +106,7 @@ export default {
         </h5>
         <hr />
 
-        <map-stopover></map-stopover>
+        <map-stopover :locationX="locationX" :locationY="locationY"></map-stopover>
 
         <h3 class="suite-bold">매력 포인트</h3>
         <div class="board-content mt-2 p-2">{{ content }}</div>
