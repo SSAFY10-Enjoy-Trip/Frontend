@@ -14,6 +14,14 @@
   font-family: 'SUITE-Light';
   src: url('@/assets/fonts/SUITE-Light.ttf');
 }
+@font-face {
+  font-family: 'SUITE-Extrabold';
+  src: url('@/assets/fonts/SUITE-ExtraBold.ttf');
+}
+@font-face {
+  font-family: 'sn별별정직';
+  src: url('@/assets/fonts/sn별별정직.ttf');
+}
 .jalnan-gothic {
   font-family: 'JalnanGothic';
 }
@@ -25,6 +33,12 @@
 }
 .suite-bold {
   font-family: 'SUITE-Bold';
+}
+.suite-extrabold {
+  font-family: 'SUITE-Extrabold';
+}
+.star-trust {
+  font-family: 'sn별별정직';
 }
 .glow-white {
   color: #fff;

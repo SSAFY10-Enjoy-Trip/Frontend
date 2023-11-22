@@ -18,10 +18,6 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
         <ul class="navbar-nav ms-5 mb-2 mb-lg-0">
           <!-- 이미지 noProfile.png, userProfileImageUrl -->
           <!-- 로그아웃, 로그인 중 한개가 베타적으로 보이도록 -->
@@ -61,6 +57,6 @@ h1 {
   font-family: 'JalnanGothic';
 }
 .navbar-custom {
-  background-color: #57895f;
+  background: linear-gradient(to top left, #f5f8f7, #ffffff);
 }
 </style>

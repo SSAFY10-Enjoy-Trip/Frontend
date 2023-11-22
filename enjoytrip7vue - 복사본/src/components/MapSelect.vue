@@ -1,22 +1,29 @@
 <template>
   <div class="row">
     <div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8">
-      <div class="p-3">
-        <body onload="initTmap()" class="mb-3">
-          <div class="text-center">
-            <h2 class="jalnan-gothic"># 나만의 코스 알리기</h2>
-            <h4 class="suite-regular">핀을 움직이고, 장소추가를 통해 코스에 등록하세요!</h4>
-          </div>
+      <div class="m-2 p-4" style="border: #eee 1px solid; background-color: #fafafa;">
+        <div>
+          <body onload="initTmap()" class="mb-3"  style="background-color: #fafafa;">
+            <div class="text-center">
+              <h2 class="jalnan-gothic"># 나만의 코스 알리기</h2>
+              <h4 class="suite-regular">핀을 움직이고, <span style="background-color: #b2e98f;">장소추가</span>를 통해 코스에 등록하세요!</h4>
+            </div>
 
-          <hr />
-          <!-- 맵 생성 실행 -->
-          <div id="map_div"></div>
-        </body>
-        <img src="../assets/boardNoti.png" alt="" class="width-100" />
+            <hr />
+            <!-- 맵 생성 실행 -->
+            <div class="d-flex justify-content-center" >
+            <div id="map_div"></div>
+
+            </div>
+          </body>
+          <img src="../assets/boardNoti.png" alt="" class="width-100" />
+        </div>
       </div>
     </div>
     <div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
-      <div class="p-3">
+      <div class="p-3 schedule-container" > 
+        <h3 class="suite-bold text-center p-1" style="background-color: #fff;">일정등록</h3>
+        <hr>
         <button
           v-for="(item, index) in rowCount"
           :key="index"
@@ -45,25 +52,25 @@
           <tr v-for="(item, idx) in rowData.rowNameValue[selectRow]" :key="{ idx }">
             <td
               class="text-center suite-bold p-2"
-              style="background-color: #fdf7d6; width: 20%; border-radius: 0px 0px 0px 0px"
+              style="background-color: #e9fde6; width: 20%; border-radius: 0px 0px 0px 0px"
             >
               💠 장소 {{ idx + 1 }}
             </td>
             <td class="p-2">{{ item }}</td>
-            <td>
+            <td class=" p-1">
               <button @click="removePlace(idx)" class="btn suite-bold" id="delete-place">X</button>
             </td>
           </tr>
           <tr>
             <td colspan="3">
               <button @click="addPlace" class="btn suite-bold" id="add-place-btn">
-                ➕ 장소추가
+                📌 장소추가
               </button>
             </td>
           </tr>
         </table>
 
-        <div id="boardDetailContent" class="mt-2 p-3">
+        <div id="boardDetailContent" class="mt-2">
           <h3 class="suite-bold">🏄‍♂️ 코스 이름</h3>
           <input
             v-model="tripBoardTitle"
@@ -220,7 +227,7 @@ const selectDay = (num) => {
 
 const changeBackground = (num) => {
   var button = document.getElementById('day-btn-' + num)
-  if (button) button.style.backgroundColor = '#ffdd448f' // 원하는 배경색으로 변경
+  if (button) button.style.backgroundColor = '#94d59d' // 원하는 배경색으로 변경
   for (let i = 0; i < 100; i++) {
     var btn = document.getElementById('day-btn-' + i)
     if (num == i) continue
@@ -304,7 +311,7 @@ export default {
       map = new Tmapv2.Map('map_div', {
         // "map_div" : 지도가 표시될 div의 id
         center: new Tmapv2.LatLng(37.5652045, 126.98702028),
-        width: '100%', // 지도의 넓이
+        width: '95%', // 지도의 넓이
         height: '60vh', // 지도의 높이
         zoom: 17
       })
@@ -347,21 +354,27 @@ export default {
   border: #000000 2px solid;
 }
 #delete-place {
-  width: 100%;
   background-color: #880c0c;
   color: white;
 }
 
 table {
-  border: 1px solid #000;
+  /* border: 1px solid #afafaf;
+  border-radius: 6px;*/
+  font-family: 'SUITE-Regular';
+}
+
+table tr {
+  border: 1px solid #f5f5f5;
+  border-bottom: 2px solid #f5f5f5;
   border-radius: 6px;
   font-family: 'SUITE-Regular';
 }
 
 #add-place-btn {
-  background: linear-gradient(to bottom, #fff679 12%, #ffdd44 100%);
+  background: linear-gradient(to bottom left, #b2e98f 12%, #b2e98f 100%);
   border-radius: 4px;
-  border: 1px solid #ebff34;
+  border: 1px solid #0aa59e;
   display: inline-block;
   cursor: pointer;
   color: #000000;
@@ -371,18 +384,14 @@ table {
   text-shadow: 0px 0px 0px #092580;
 }
 #add-place-btn:hover {
-  background: linear-gradient(to bottom, #f7ee72 12%, #f1d13e 100%);
-  background-color: #77a809;
+  background: linear-gradient(to bottom left, #a3dc96 12%, #22b37e 100%);
+  border: 1px solid #03928b;
 }
 #add-place-btn:active {
   position: relative;
   top: 1px;
 }
 
-#boardDetailContent {
-  border: 1px solid #888;
-  border-radius: 10px;
-}
 
 .board-content {
   border: #888 1px solid;
@@ -400,7 +409,7 @@ textarea {
   color: #353014;
 }
 .day-btn:hover {
-  background-color: #ffdd448f;
+  background-color: #099f2828;
 }
 
 .day-plus-btn {
@@ -422,5 +431,10 @@ textarea {
 }
 .day-minus-btn:hover {
   background-color: #d86767;
+}
+
+.schedule-container {
+  border-radius: 10px;
+  border: 1px #ccc solid;
 }
 </style>

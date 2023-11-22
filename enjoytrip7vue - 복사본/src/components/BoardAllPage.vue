@@ -101,15 +101,7 @@ const router = useRouter()
 
 function timeForToday(value) {
   const today = new Date()
-  const timeValue = new Date(
-    value.date.year,
-    value.date.month - 1, // Months are zero-based in JavaScript (0-Jan, 1-Feb, ..., 11-Dec)
-    value.date.day,
-    value.time.hour,
-    value.time.minute,
-    value.time.second,
-    value.time.nano / 1e6 // Convert nanoseconds to milliseconds
-  )
+  const timeValue = new Date(value)
 
   const betweenTime = Math.floor((today.getTime() - timeValue.getTime()) / 1000 / 60)
   if (betweenTime < 1) return '방금 전'
@@ -214,9 +206,9 @@ export default {
           regDt.push(timeForToday(row.regDt))
           readCount.push(row.readCount)
           likeCount.push(row.likeCount)
-          memberName.push(row.member.name)
-          memberId.push(row.memberId)
-          memberProfileImageUrl.push(row.memberProfileImageUrl)
+          memberName.push(row.name)
+          memberId.push(row.member_id)
+          memberProfileImageUrl.push(row.profileImageUrl)
           cnt++
         })
         console.log(location)
