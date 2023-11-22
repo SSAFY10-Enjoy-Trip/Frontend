@@ -13,7 +13,8 @@
         class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12"
         style="display: flex; align-items: flex-end; justify-content: flex-end"
       >
-        {{ memberName[index] }} | {{ regDt[index] }} | 조회 {{ readCount[index] }}
+        {{ memberName[index] }} | {{ regDt[index] }} | 조회 {{ readCount[index] }} | 담기
+        {{ likeCount[index] }}
       </div>
     </div>
 
@@ -52,6 +53,7 @@ let location = reactive([])
 let allLocation = reactive([])
 let regDt = reactive([])
 let readCount = reactive([])
+let likeCount = reactive([])
 let memberName = reactive([])
 let memberId = reactive([])
 let memberProfileImageUrl = reactive([])
@@ -59,6 +61,7 @@ const router = useRouter()
 const insertTripBoard = async () => {
   try {
     let { data } = await http.get('/tripBoard')
+    console.log('얘래')
     console.log(data)
     let cnt = 0
     data.forEach((row) => {
@@ -74,6 +77,7 @@ const insertTripBoard = async () => {
       allLocation.push(sum)
       regDt.push(timeForToday(row.regDt))
       readCount.push(row.readCount)
+      likeCount.push(row.likeCount)
       memberName.push(row.member.name)
       memberId.push(row.memberId)
       memberProfileImageUrl.push(row.memberProfileImageUrl)
@@ -115,6 +119,7 @@ export default {
     title.length = 0
     content.length = 0
     location.length = 0
+    likeCount.length = 0
     allLocation.length = 0
     regDt.length = 0
     readCount.length = 0
@@ -133,7 +138,8 @@ export default {
       memberId,
       memberProfileImageUrl,
       regDt,
-      readCount
+      readCount,
+      likeCount
     }
   },
   methods: {

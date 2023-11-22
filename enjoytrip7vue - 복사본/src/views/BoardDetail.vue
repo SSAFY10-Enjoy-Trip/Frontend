@@ -21,6 +21,7 @@ let location = reactive([])
 let allLocation = ref(0)
 let regDt = ref('')
 let readCount = ref('')
+let likeCount = ref('')
 let memberName = ref('')
 let memberId = ref(0)
 let memberProfileImageUrl = ref('')
@@ -30,12 +31,15 @@ let locationY = []
 const insertTripBoard = async () => {
   try {
     let { data } = await http.get('/tripBoard/' + boardNum.value)
+    console.log('갖고온 데이터')
+    console.log(data)
     title.value = data.title
     content.value = data.content
     location = data.location
     allLocation.value = data.allLocation
     regDt.value = data.regDt.replace('T', ' ')
     readCount.value = data.readCount
+    likeCount.value = data.likeCount
     memberName.value = data.member.name
     memberId.value = data.memberId
     memberProfileImageUrl.value = data.memberProfileImageUrl
@@ -68,6 +72,7 @@ export default {
       memberProfileImageUrl,
       regDt,
       readCount,
+      likeCount,
 
       likeImage: false,
       isMine: false
@@ -103,8 +108,9 @@ export default {
       // 좋아요 했으면
       if (this.likeImage == false) {
         // 로그인 했으면
-        console.log("여기다요")
+        console.log('여기다요')
         console.log(isLogin.value)
+        likeCount.value += 1
         if (isLogin.value == true) {
           this.likeImage = !this.likeImage
           this.heartUpdate()
@@ -116,52 +122,53 @@ export default {
       }
       // 좋아요 해제 했으면
       else {
+        likeCount.value -= 1
         this.likeImage = !this.likeImage
         this.heartUpdate()
       }
     },
     async heartUpdate() {
-            let boardObj = {
-              boardId: boardNum.value
-            }
-            try {
-              let { data } = await http.post('/like', boardObj)
-              console.log(data)
+      let boardObj = {
+        boardId: boardNum.value
+      }
+      try {
+        let { data } = await http.post('/like', boardObj)
+        console.log(data)
 
-              if (data.result == 'success') {
-              } else if (data.board == 'fail') {
-                alert('업데이트 오류가 발생했습니다.')
-              }
-            } catch (error) {
-              console.log(error)
-            }
-          },
+        if (data.result == 'success') {
+        } else if (data.board == 'fail') {
+          alert('업데이트 오류가 발생했습니다.')
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
     async heartCheck() {
-            let boardObj = {
-              boardId: boardNum.value
-            }
-            try {
-              let { data } = await http.post('/like/check', boardObj)
-              console.log("Q. 나는 좋아요를 했다? => ", data)
+      let boardObj = {
+        boardId: boardNum.value
+      }
+      try {
+        let { data } = await http.post('/like/check', boardObj)
+        console.log('Q. 나는 좋아요를 했다? => ', data)
 
-              this.likeImage = data
-            } catch (error) {
-              console.log(error)
-            }
-          },
+        this.likeImage = data
+      } catch (error) {
+        console.log(error)
+      }
+    },
     async writerCheck() {
-            let boardObj = {
-              boardId: boardNum.value
-            }
-            try {
-              let { data } = await http.post('/tripBoard/check', boardObj)
-              console.log("Q. 이거 내 글이다? => ", data)
+      let boardObj = {
+        boardId: boardNum.value
+      }
+      try {
+        let { data } = await http.post('/tripBoard/check', boardObj)
+        console.log('Q. 이거 내 글이다? => ', data)
 
-              this.isMine = data
-            } catch (error) {
-              console.log(error)
-            }
-          }
+        this.isMine = data
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 }
 </script>
@@ -176,7 +183,8 @@ export default {
       <div id="boardDetailContent" class="mt-2 p-3">
         <h1>{{ title }}</h1>
         <h5>
-          작성자 : {{ memberName }} | 작성일 : {{ regDt }} | 조회수 : {{ readCount }} | 담기 : 23
+          작성자 : {{ memberName }} | 작성일 : {{ regDt }} | 조회수 : {{ readCount }} | 담기 :
+          {{ likeCount }}
         </h5>
         <hr />
 
@@ -204,7 +212,7 @@ export default {
             </button>
 
             <span class="suite-regular left-space-3">좋아요</span>
-            <span class="suite-bold left-space-3"> 28</span>
+            <span class="suite-bold left-space-3"> {{ likeCount }}</span>
             <span class="suite-regular left-space-6"></span>
             <img class="likeBtn" src="../assets/comment.png" />
             <span class="suite-regular left-space-3">댓글</span>
@@ -216,8 +224,8 @@ export default {
 
         <button @click="" v-show="true" class="btn btn-success m-1">글작성</button>
         <button @click="" class="btn btn-light m-1">공유</button>
-        <button @click="" v-show="isMine"  class="btn btn-light m-1">수정</button>
-        <button @click="" v-show="isMine"  class="btn btn-light m-1">삭제</button>
+        <button @click="" v-show="isMine" class="btn btn-light m-1">수정</button>
+        <button @click="" v-show="isMine" class="btn btn-light m-1">삭제</button>
         <hr />
         <h5>댓글 작성</h5>
         <div class="row mb-3" style="height: 3.4em">
