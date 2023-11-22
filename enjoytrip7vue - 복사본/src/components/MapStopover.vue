@@ -1,11 +1,29 @@
 <template>
   <!-- <p>{{ locationX }}</p> -->
+  <div class="left-space-10">
+    <button
+      v-for="(item, index) in rowCount"
+      :key="index"
+      @click="selectDay(index)"
+      class="day-btn suite-bold"
+      :id="'day-btn-' + index"
+    >
+      {{ index + 1 }}일차
+    </button>
+  </div>
   <div class="row suite-regular map-result m-1">
     <table>
-      <tr v-for="(item, idx) in stopoverAddres" :key="idx">
+      <!-- {{
+        addrName
+      }}
+      {{
+        daySelect
+      }} -->
+
+      <tr v-for="(item, idx) in addrName[daySelect]" :key="idx">
         <td
           class="text-center suite-bold p-2"
-          style="background-color: #e9fdd6; width: 20%; border-radius: 0px 0px 0px 0px"
+          style="background-color: #e9fdd6; width: 20%; border-radius: 8px"
         >
           💠 장소 {{ idx + 1 }}
         </td>
@@ -82,45 +100,6 @@ function resettingMap() {
   resultMarkerArr = []
 }
 
-let selectNum = -1
-function loadGetLonLatFromAddress() {
-  // TData 객체 생성
-  var tData = new Tmapv2.extension.TData()
-
-  var optionObj = {
-    coordType: 'WGS84GEO', //응답좌표 타입 옵션 설정 입니다.
-    addressType: 'A04' //주소타입 옵션 설정 입니다.
-  }
-
-  var params = {
-    onComplete: onComplete //데이터 로드가 성공적으로 완료 되었을때 실행하는 함수 입니다.
-  }
-  // 경유지 임시 값
-  let tmepAddY = [
-    37.402688, 37.399569, 37.402748, 37.397153, 37.410135, 37.3994, 37.406327, 37.413227, 37.414382
-  ]
-  tmepAddY = location.rowPositionXValue[1]
-  let tmepAddX = [
-    127.103259, 127.10379, 127.108913, 127.113403, 127.12121, 127.123296, 127.130933, 127.127337,
-    127.142571
-  ]
-  tmepAddX = location.rowPositionYValue[1]
-
-  var step
-  for (step = 0; step < tmepAddY.length; step++) {
-    selectNum = step
-    // TData 객체의 리버스지오코딩 함수
-    tData.getAddressFromGeoJson(tmepAddY[step], tmepAddX[step], optionObj, params)
-  }
-}
-//리버스 지오코딩
-function onComplete() {
-  resultAddress.value = this._responseData.addressInfo.fullAddress //출력될 결과 주소 정보 입니다.
-  var result = '현재 지도의 중심 좌표주소 : ' + resultAddress.value + ' : ' + selectNum
-  stopoverAddres.push(resultAddress.value)
-  // console.log(stopoverAddres)
-}
-
 // 앱키
 import { useKeyStore } from '@/store/appkey.js'
 
@@ -128,8 +107,10 @@ import { useKeyStore } from '@/store/appkey.js'
 let boardNum = ref(0)
 let addrX = reactive([[]]) // 특정일의 좌표값X
 let addrY = reactive([[]]) // 특정일의 좌표값Y
-let daySelect = ref(1) // 일자 지정
+let addrName = reactive([[]]) // 특정일의 장소 이름값
+let daySelect = ref(0) // 일자 지정
 let location = reactive([])
+let rowCount = ref(1)
 
 export default {
   props: {
@@ -148,7 +129,21 @@ export default {
   setup() {
     stopoverAddres.length = 0
   },
-  created() {},
+  created() {
+    location = this.locationX
+    addrX = this.locationX.rowPositionXValue
+    addrY = this.locationX.rowPositionYValue
+    addrName = this.locationX.rowNameValue
+
+    addrX.splice(0, 1)
+    addrY.splice(0, 1)
+    addrName.splice(0, 1)
+    rowCount.value = addrName.length
+
+    console.log('여기가 그 억까의 현장입니다!')
+    console.log(addrY)
+    console.log(addrName)
+  },
   data() {
     return {
       selectedOption: '0',
@@ -169,28 +164,26 @@ export default {
       location,
       addrX,
       addrY,
-      daySelect
+      addrName,
+      daySelect,
+      rowCount
     }
   },
   mounted() {
     boardNum.value = this.$route.params.boardNum
-    console.log('게시글 ID:', boardNum.value)
-    setTimeout(this.initTmap, 100)
-    // this.initTmap()
+    // console.log('게시글 ID:', boardNum.value)
+
+    setTimeout(this.initTmap, 800)
   },
   methods: {
     initTmap() {
-      if (mapDiv.value) {
-        mapDiv.value.innerHTML = '' // Clearing the content
-      }
+      var mapDiv = document.getElementById('map_div')
+      // div의 내용을 모두 지우기
+      mapDiv.innerHTML = ''
 
-      location = this.locationX
-      addrX = this.locationX.rowPositionXValue
-      addrY = this.locationX.rowPositionYValue
-      loadGetLonLatFromAddress()
       resultMarkerArr = []
 
-      console.log(location)
+      // console.log(location)
       // 1. 지도 띄우기
       map.value = new Tmapv2.Map('map_div', {
         center: new Tmapv2.LatLng(addrX[daySelect.value][0], addrY[daySelect.value][0]),
@@ -213,7 +206,7 @@ export default {
       })
       resultMarkerArr.push(marker_s)
 
-      console.log('경유지 개수', addrX[daySelect.value].length - 1)
+      // console.log('경유지 개수', addrX[daySelect.value].length - 1)
       for (let i = 1; i < addrX[daySelect.value].length - 1; i++) {
         // 3. 경유지 심볼 찍기
         let marker = new Tmapv2.Marker({
@@ -234,8 +227,8 @@ export default {
         // 경유지 정보를 배열에 추가
         viaPoints.push(viaPoint)
       }
-      console.log('삐약포인트')
-      console.log(viaPoints)
+      // console.log('삐약포인트')
+      // console.log(viaPoints)
 
       // 도착
       marker_e = new Tmapv2.Marker({
@@ -249,7 +242,7 @@ export default {
       })
       resultMarkerArr.push(marker_e)
 
-      console.log(resultMarkerArr)
+      // console.log(resultMarkerArr)
 
       // 4. 경로탐색 API 사용요청
       var routeLayer
@@ -394,16 +387,16 @@ export default {
             }
           },
           error: function (request, status, error) {
-            console.log(
-              'code:' +
-                request.status +
-                '\n' +
-                'message:' +
-                request.responseText +
-                '\n' +
-                'error:' +
-                error
-            )
+            // console.log(
+            //   'code:' +
+            //     request.status +
+            //     '\n' +
+            //     'message:' +
+            //     request.responseText +
+            //     '\n' +
+            //     'error:' +
+            //     error
+            // )
           }
         })
       })
@@ -411,6 +404,25 @@ export default {
     addComma(num) {
       var regexp = /\B(?=(\d{3})+(?!\d))/g
       return num.toString().replace(regexp, ',')
+    },
+    // 일자 선택
+    selectDay(num) {
+      daySelect.value = num
+      this.changeBackground(num)
+      this.initTmap()
+    },
+    changeBackground(num) {
+      var button = document.getElementById('day-btn-' + num)
+      if (button) button.style.backgroundColor = '#54ff448f' // 원하는 배경색으로 변경
+      for (let i = 0; i < 100; i++) {
+        var btn = document.getElementById('day-btn-' + i)
+        if (num == i) continue
+        if (btn) {
+          btn.style.backgroundColor = 'white'
+        } else {
+          break
+        }
+      }
     }
   }
 }
@@ -428,5 +440,16 @@ export default {
   border-radius: 8px;
   height: 100%;
   background-color: #198754;
+}
+
+.day-btn {
+  border: 1px solid #353014;
+  border-radius: 10px 10px 0px 0px;
+  padding: 4px 9px;
+  background-color: #ffffff;
+  color: #353014;
+}
+.day-btn:hover {
+  background-color: #54ff448f;
 }
 </style>
