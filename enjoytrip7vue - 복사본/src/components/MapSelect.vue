@@ -252,7 +252,8 @@ const insertTripBoard = async () => {
     if (data.board == 'SUCCESS') {
       // BoardView.vue 페이지 이동
       // router.push('/board')
-      this.$router.push({ path: '/bordAll' });
+      // this.$router.push({ path: '/bordAll' });
+      router.push({ path: '/bordAll' }) // 여기서 this.$router 대신 router를 사용
     } else if (data.board == 'FAIL') {
       alert('게시판 등록 실패')
     }
@@ -281,7 +282,8 @@ export default {
       changeBackground,
       insertTripBoard,
       tripBoardTitle,
-      tripBoardContent
+      tripBoardContent,
+      router
     }
   },
   mounted() {

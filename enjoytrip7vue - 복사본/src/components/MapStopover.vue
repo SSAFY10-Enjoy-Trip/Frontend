@@ -1,5 +1,15 @@
 <template>
-  <!-- <p>{{ locationX }}</p> -->
+  <h2>받아온 값</h2>
+  <div>{{ locationX }}</div>
+
+  <h2>실제 출력값</h2>
+  <div>{{ addrName }}</div>
+  <br />
+  <!-- <div>{{ addrName[daySelect] }}</div>
+  <br />
+  <div>{{ daySelect }}</div> -->
+  <br />
+
   <div class="left-space-10">
     <button
       v-for="(item, index) in rowCount"
@@ -11,15 +21,9 @@
       {{ index + 1 }}일차
     </button>
   </div>
+
   <div class="row suite-regular map-result m-1">
     <table>
-      <!-- {{
-        addrName
-      }}
-      {{
-        daySelect
-      }} -->
-
       <tr v-for="(item, idx) in addrName[daySelect]" :key="idx">
         <td
           class="text-center suite-bold p-2"
@@ -69,7 +73,7 @@ var resultMarkerArr = []
 var drawInfoArr = reactive([])
 var resultInfoArr = reactive([])
 
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 const distance = ref('')
 const spandtime = ref('')
 const pay = ref('')
@@ -105,44 +109,74 @@ import { useKeyStore } from '@/store/appkey.js'
 
 // 서버에서 지도 좌표값 가져와버리기
 let boardNum = ref(0)
-let addrX = reactive([[]]) // 특정일의 좌표값X
-let addrY = reactive([[]]) // 특정일의 좌표값Y
-let addrName = reactive([[]]) // 특정일의 장소 이름값
-let daySelect = ref(0) // 일자 지정
-let location = reactive([])
+// let addrX = reactive([[1], [1], [1], [1]]) // 특정일의 좌표값X
+// let addrY = reactive([[1], [1], [1], [1]]) // 특정일의 좌표값Y
+// let addrName = reactive([[1], [1], [1], [1]]) // 특정일의 장소 이름값
+// let daySelect = ref(0) // 일자 지정
+// let location = reactive([1])
 let rowCount = ref(1)
 
 export default {
   props: {
-    locationX: Array,
-    locationY: Array
+    locationX: Object,
+    locationY: Object
   },
   computed: {
     // props로 받은 배열을 computed 속성을 이용하여 사용
-    locationX() {
+    getLocationX() {
       return this.locationX
     },
-    locationY() {
+    getLocationY() {
       return this.locationY
     }
   },
   setup() {
     stopoverAddres.length = 0
   },
-  created() {
-    location = this.locationX
-    addrX = this.locationX.rowPositionXValue
-    addrY = this.locationX.rowPositionYValue
-    addrName = this.locationX.rowNameValue
+  // updated() {
+  //   console.log('나는 받아온 데이터')
+  //   console.log(this.locationX)
+  //   this.daySelect = 0
+  //   // location.length = 0
+  //   // addrX.length = 0
+  //   // addrY.length = 0
+  //   // addrName.length = 0
 
-    addrX.splice(0, 1)
-    addrY.splice(0, 1)
-    addrName.splice(0, 1)
-    rowCount.value = addrName.length
+  //   this.location = this.locationX
+  //   this.addrX = this.locationX.rowPositionXValue
+  //   this.addrY = this.locationX.rowPositionYValue
+  //   this.addrName = this.locationX.rowNameValue
+
+  //   this.addrX.splice(0, 1)
+  //   this.addrY.splice(0, 1)
+  //   this.addrName.splice(0, 1)
+  //   this.rowCount = this.addrName.length
+
+  //   console.log('여기가 그 억까의 현장입니다!')
+  //   console.log(this.addrName)
+  // },
+
+  created() {
+    console.log('나는 받아온 데이터')
+    console.log(this.locationX)
+    this.daySelect = 0
+    // location.length = 0
+    // addrX.length = 0
+    // addrY.length = 0
+    // addrName.length = 0
+
+    this.location = this.locationX
+    this.addrX = this.locationX.rowPositionXValue
+    this.addrY = this.locationX.rowPositionYValue
+    this.addrName = this.locationX.rowNameValue
+
+    this.addrX.splice(0, 1)
+    this.addrY.splice(0, 1)
+    this.addrName.splice(0, 1)
+    this.rowCount = this.addrName.length
 
     console.log('여기가 그 억까의 현장입니다!')
-    console.log(addrY)
-    console.log(addrName)
+    console.log(this.addrName)
   },
   data() {
     return {
@@ -161,32 +195,33 @@ export default {
       resultInfoArr: [],
       drawInfoArr: [],
 
-      location,
-      addrX,
-      addrY,
-      addrName,
-      daySelect,
-      rowCount
+      location: {},
+      addrX: {},
+      addrY: {},
+      addrName: {},
+      daySelect: 0,
+      rowCount: 0
     }
   },
   mounted() {
     boardNum.value = this.$route.params.boardNum
     // console.log('게시글 ID:', boardNum.value)
 
-    setTimeout(this.initTmap, 800)
+    setTimeout(this.initTmap, 0)
   },
   methods: {
     initTmap() {
       var mapDiv = document.getElementById('map_div')
       // div의 내용을 모두 지우기
       mapDiv.innerHTML = ''
+      map.value = null
 
       resultMarkerArr = []
 
       // console.log(location)
       // 1. 지도 띄우기
       map.value = new Tmapv2.Map('map_div', {
-        center: new Tmapv2.LatLng(addrX[daySelect.value][0], addrY[daySelect.value][0]),
+        center: new Tmapv2.LatLng(this.addrX[this.daySelect][0], this.addrY[this.daySelect][0]),
         width: '100%',
         height: '400px',
         zoom: 14,
@@ -199,18 +234,18 @@ export default {
       // 2. 시작, 도착 심볼찍기
       // 시작
       marker_s = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(addrX[daySelect.value][0], addrY[daySelect.value][0]),
+        position: new Tmapv2.LatLng(this.addrX[this.daySelect][0], this.addrY[this.daySelect][0]),
         icon: 'https://static-00.iconduck.com/assets.00/location-pin-icon-385x512-fdmj5z3x.png',
         iconSize: new Tmapv2.Size(24, 38),
         map: map.value
       })
       resultMarkerArr.push(marker_s)
 
-      // console.log('경유지 개수', addrX[daySelect.value].length - 1)
-      for (let i = 1; i < addrX[daySelect.value].length - 1; i++) {
+      // console.log('경유지 개수', addrX[daySelect].length - 1)
+      for (let i = 1; i < this.addrX[this.daySelect].length - 1; i++) {
         // 3. 경유지 심볼 찍기
         let marker = new Tmapv2.Marker({
-          position: new Tmapv2.LatLng(addrX[daySelect.value][i], addrY[daySelect.value][i]),
+          position: new Tmapv2.LatLng(this.addrX[this.daySelect][i], this.addrY[this.daySelect][i]),
           icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Flat_tick_icon.svg/1024px-Flat_tick_icon.svg.png',
           iconSize: new Tmapv2.Size(24, 38),
           map: map.value
@@ -220,8 +255,8 @@ export default {
         let viaPoint = {
           viaPointId: `test${i}`,
           viaPointName: `name${i}`,
-          viaX: addrY[daySelect.value][i].toString(), // X 좌표를 문자열로 변환
-          viaY: addrX[daySelect.value][i].toString() // Y 좌표를 문자열로 변환
+          viaX: this.addrY[this.daySelect][i].toString(), // X 좌표를 문자열로 변환
+          viaY: this.addrX[this.daySelect][i].toString() // Y 좌표를 문자열로 변환
         }
 
         // 경유지 정보를 배열에 추가
@@ -233,8 +268,8 @@ export default {
       // 도착
       marker_e = new Tmapv2.Marker({
         position: new Tmapv2.LatLng(
-          addrX[daySelect.value][addrX[daySelect.value].length - 1],
-          addrY[daySelect.value][addrY[daySelect.value].length - 1]
+          this.addrX[this.daySelect][this.addrX[this.daySelect].length - 1],
+          this.addrY[this.daySelect][this.addrY[this.daySelect].length - 1]
         ),
         icon: 'https://cdn-icons-png.flaticon.com/512/7310/7310018.png',
         iconSize: new Tmapv2.Size(24, 38),
@@ -259,12 +294,12 @@ export default {
         if (viaPoints.length != 0) {
           param = JSON.stringify({
             startName: '출발지',
-            startX: addrY[daySelect.value][0].toString(),
-            startY: addrX[daySelect.value][0].toString(),
+            startX: this.addrY[this.daySelect][0].toString(),
+            startY: this.addrX[this.daySelect][0].toString(),
             startTime: '201708081103',
             endName: '도착지',
-            endX: addrY[daySelect.value][addrY[daySelect.value].length - 1].toString(),
-            endY: addrX[daySelect.value][addrX[daySelect.value].length - 1].toString(),
+            endX: this.addrY[this.daySelect][this.addrY[this.daySelect].length - 1].toString(),
+            endY: this.addrX[this.daySelect][this.addrX[this.daySelect].length - 1].toString(),
             viaPoints: viaPoints,
             reqCoordType: 'WGS84GEO',
             resCoordType: 'EPSG3857',
@@ -273,18 +308,18 @@ export default {
         } else {
           param = JSON.stringify({
             startName: '출발지',
-            startX: addrY[daySelect.value][0].toString(),
-            startY: addrX[daySelect.value][0].toString(),
+            startX: this.addrY[this.daySelect][0].toString(),
+            startY: this.addrX[this.daySelect][0].toString(),
             startTime: '201708081103',
             endName: '도착지',
-            endX: addrY[daySelect.value][addrY[daySelect.value].length - 1].toString(),
-            endY: addrX[daySelect.value][addrX[daySelect.value].length - 1].toString(),
+            endX: this.addrY[this.daySelect][this.addrY[this.daySelect].length - 1].toString(),
+            endY: this.addrX[this.daySelect][this.addrX[this.daySelect].length - 1].toString(),
             viaPoints: [
               {
                 viaPointId: `test0`,
                 viaPointName: `name0`,
-                viaX: addrY[daySelect.value][0].toString(), // X 좌표를 문자열로 변환
-                viaY: addrX[daySelect.value][0].toString() // Y 좌표를 문자열로 변환
+                viaX: this.addrY[this.daySelect][0].toString(), // X 좌표를 문자열로 변환
+                viaY: this.addrX[this.daySelect][0].toString() // Y 좌표를 문자열로 변환
               }
             ],
             reqCoordType: 'WGS84GEO',
@@ -407,7 +442,7 @@ export default {
     },
     // 일자 선택
     selectDay(num) {
-      daySelect.value = num
+      this.daySelect = num
       this.changeBackground(num)
       this.initTmap()
     },

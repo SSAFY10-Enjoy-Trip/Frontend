@@ -26,8 +26,8 @@ let memberName = ref('')
 let memberId = ref(0)
 let memberProfileImageUrl = ref('')
 
-let locationX = []
-let locationY = []
+let locationX = {}
+let locationY = {}
 const insertTripBoard = async () => {
   try {
     let { data } = await http.get('/tripBoard/' + boardNum.value)
