@@ -32,6 +32,9 @@
             <router-link to="/register" replace class="nav-link">회원가입</router-link>
           </button>
         </div>
+        <button class="btn btn-outline-secondary mx-2" type="button">
+            <router-link to="/findPassword" replace class="nav-link">비밀번호 찾기</router-link>
+          </button>
       </div>
     </div>
   </div>

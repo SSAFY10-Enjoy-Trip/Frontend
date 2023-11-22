@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import MainPage from '@/components/MainPage.vue'
 import LoginPage from '@/components/LoginPage.vue'
 import RegisterPage from '@/components/RegisterPage.vue'
+import FindPasswordPage from '@/components/FindPasswordPage.vue'
 import BoardMain from '@/views/BoardMain.vue'
 import BoardAll from '@/views/BoardAll.vue'
 import BoardFollow from '@/views/BoardFollow.vue'
@@ -25,6 +26,11 @@ const router = createRouter({
       path: '/register',
       name: 'Register',
       component: RegisterPage
+    },
+    {
+      path: '/findPassword',
+      name: 'FindPassword',
+      component: FindPasswordPage
     },
     {
       path: '/boardList',

@@ -8,6 +8,7 @@
           <input
             type="email"
             placeholder="이메일"
+            class="form-control"
             :class="{ 'is-valid': isEmailFocusAndValid, 'is-invalid': isEmailFocusAndInValid }"
             v-model="email"
             @input="validateEmail"
@@ -20,6 +21,7 @@
           <input
             type="name"
             placeholder="이름"
+            class="form-control"
             :class="{ 'is-valid': isNameFocusAndValid, 'is-invalid': isNameFocusAndInvalid }"
             v-model="name"
             @input="validateName"
@@ -32,6 +34,7 @@
           <input
             type="password"
             placeholder="비밀번호를 입력하세요."
+            class="form-control"
             :class="{
               'is-valid': isPasswordFocusAndValid,
               'is-invalid': isPasswordFocusAndInvalid
@@ -49,6 +52,7 @@
           <input
             type="password"
             placeholder="비밀번호를 확인하세요."
+            class="form-control"
             :class="{
               'is-valid': isPassword2FocusAndValid,
               'is-invalid': isPassword2FocusAndInvalid
