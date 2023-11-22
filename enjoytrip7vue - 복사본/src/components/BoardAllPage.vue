@@ -1,5 +1,7 @@
 <template>
-  <div
+  <div>
+
+    <div
     v-for="(item, index) in boardId"
     :key="index"
     @click="showBoardDetail(boardId[index])"
@@ -76,6 +78,7 @@
       </li>
     </ul>
   </nav>
+  </div>
 </template>
 
 <script>
@@ -173,9 +176,9 @@ export default {
       }
       try {
         let { data } = await http.post('/tripBoard/all', boardObj)
-        console.log('얘래')
-        console.log(data)
-        console.log(JSON.parse(data.board))
+        // console.log('얘래')
+        // console.log(data)
+        // console.log(JSON.parse(data.board))
         // 초기화
         let cnt = 0
         boardId.length = 0
@@ -198,7 +201,7 @@ export default {
           content.push(row.content)
           location.push(JSON.parse(row.location))
           let sum = 0
-          console.log(location[cnt].rowCount)
+          // console.log(location[cnt].rowCount)
           for (let i = 1; i < location[cnt].rowCount; i++) {
             sum += location[cnt].rowNameValue[i].length
           }
@@ -211,9 +214,9 @@ export default {
           memberProfileImageUrl.push(row.profileImageUrl)
           cnt++
         })
-        console.log(location)
+        // console.log(location)
       } catch (error) {
-        console.log(error)
+        // console.log(error)
       }
     },
     showBoardDetail(boardNum) {

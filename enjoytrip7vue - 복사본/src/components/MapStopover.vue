@@ -4,6 +4,7 @@
 
   <h2>실제 출력값</h2>
   <div>{{ addrName }}</div>
+  <div>{{ locationX.rowNameValue }}</div>
   <br />
   <!-- <div>{{ addrName[daySelect] }}</div>
   <br />
