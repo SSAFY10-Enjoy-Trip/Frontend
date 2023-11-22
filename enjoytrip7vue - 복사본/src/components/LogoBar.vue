@@ -1,12 +1,8 @@
 <template>
-  <nav class="navbar navbar-expand-lg bg-light mb-3">
+  <nav class="navbar navbar-expand-lg mb-3 navbar-custom">
     <div class="container-fluid">
       <router-link to="/" class="nav-link">
-        <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxtomcAhqHu3X2B8Haxa3bK3mXFYqhMtDYJg&usqp=CAU"
-          alt=""
-          style="height: 24px"
-        />
+        <img src="../assets/logo.png" alt="" style="height: 60px" />
       </router-link>
 
       <button
@@ -42,9 +38,8 @@
 </template>
 
 <script setup>
-import {useAuthStore} from '@/store/authStore.js';
-const {authStore, logout} = useAuthStore()
-
+import { useAuthStore } from '@/store/authStore.js'
+const { authStore, logout } = useAuthStore()
 </script>
 
 <style scoped>
@@ -64,5 +59,8 @@ table {
 }
 h1 {
   font-family: 'JalnanGothic';
+}
+.navbar-custom {
+  background-color: #57895f;
 }
 </style>
