@@ -1,26 +1,51 @@
 <script>
+import { useAuthStore } from '@/store/authStore.js'
 export default {
+  data() {
+    return {
+      userName: ref('로그인 후 이용하세요'),
+      userEmail: ref(''),
+      userProfile: ref('src/assets/noProfile.png'),
+      userLogin: ref(false)
+    }
+  },
+  created() {
+    const { authStore } = useAuthStore()
+    this.userLogin = authStore.isLogin
+    if (this.userLogin) {
+      this.userEmail = authStore.email
+      this.userName = authStore.name + '님 안녕하세요?'
+      this.userProfile = authStore.profileImageUrl
+    }
+  },
   methods: {
     navigateToBoardAll() {
-      this.$router.push({ path: '/bordAll' });
+      this.$router.push({ path: '/bordAll' })
     },
     navigateToBoardFollow() {
-      this.$router.push({ path: '/bordFollow' });
+      this.$router.push({ path: '/bordFollow' })
     },
     navigateToBoardHot() {
-      this.$router.push({ path: '/bordHot' });
+      this.$router.push({ path: '/bordHot' })
     },
     navigateToBoardInsert() {
-      this.$router.push({ path: '/bordInsert' });
+      this.$router.push({ path: '/bordInsert' })
+    },
+    navigateToMyPage() {
+      if (this.userLogin) {
+        this.$router.push(`/myPage/${this.userEmail}`)
+      } else {
+        alert('로그인 후 이용해주세요')
+      }
     }
   }
 }
 </script>
 
 <script setup>
-import { useAuthStore } from '@/store/authStore.js'
+import { ref } from 'vue'
 
-const { authStore } = useAuthStore();
+const { authStore } = useAuthStore()
 </script>
 
 <template>
@@ -29,12 +54,20 @@ const { authStore } = useAuthStore();
       <thead>
         <tr>
           <td class="list-backgrond">
-            <img class="user-profile hover-pointer" @click="" src="https://samg.net/2020/wp-content/uploads/2020/08/chachaping_011.png" alt="">
-            <div><span class="suite-bold hover-pointer" @click="">홍길동</span>님 반갑습니다!</div>
-            
+            <img
+              class="user-profile hover-pointer"
+              :src="userProfile"
+              alt=""
+              v-on:click="navigateToMyPage"
+            />
+            <div>
+              <span class="suite-bold hover-pointer" v-on:click="navigateToMyPage">{{
+                userName
+              }}</span>
+            </div>
           </td>
         </tr>
-        <tr style="border-top: 3px solid #888;">
+        <tr style="border-top: 3px solid #888">
           <th scope="col">카테고리</th>
         </tr>
       </thead>
@@ -49,10 +82,15 @@ const { authStore } = useAuthStore();
           <td @click="navigateToBoardHot" class="hover-pointer bar-content">주간인기글</td>
         </tr>
         <tr>
-          <button @click="navigateToBoardInsert" class="hover-pointer btn write-board">글작성</button>
+          <button @click="navigateToBoardInsert" class="hover-pointer btn write-board">
+            글작성
+          </button>
         </tr>
         <tr>
-          <button v-if="authStore.isManager || authStore.isSupervisor" class="hover-pointer btn write-board">
+          <button
+            v-if="authStore.isManager || authStore.isSupervisor"
+            class="hover-pointer btn write-board"
+          >
             <router-link to="/managePage" replace class="nav-link">관리자 페이지</router-link>
           </button>
         </tr>
@@ -73,7 +111,7 @@ table {
   object-fit: cover;
   border: #eee solid 1px;
 }
-.list-backgrond{
+.list-backgrond {
   background-color: #f3f3f3;
 }
 
