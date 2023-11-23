@@ -53,7 +53,7 @@ const { authStore } = useAuthStore();
         </tr>
         <tr>
           <button v-if="authStore.isManager || authStore.isSupervisor" class="hover-pointer btn write-board">
-            <router-link to="/managerPage" replace class="nav-link">관리자 페이지</router-link>
+            <router-link to="/managePage" replace class="nav-link">관리자 페이지</router-link>
           </button>
         </tr>
       </tbody>

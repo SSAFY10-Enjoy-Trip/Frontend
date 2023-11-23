@@ -3,14 +3,13 @@ import MainPage from '@/components/MainPage.vue'
 import LoginPage from '@/components/LoginPage.vue'
 import RegisterPage from '@/components/RegisterPage.vue'
 import FindPasswordPage from '@/components/FindPasswordPage.vue'
-import ManagerPage from '@/components/ManagerPage.vue'
+import ManagePage from '@/views/ManagePage.vue'
 import BoardMain from '@/views/BoardMain.vue'
 import BoardAll from '@/views/BoardAll.vue'
 import BoardFollow from '@/views/BoardFollow.vue'
 import BoardHot from '@/views/BoardHot.vue'
 import BoardDetail from '@/views/BoardDetail.vue'
 import BoardInsert from '@/views/BoardInsert.vue'
-import { useAuthStore } from '../store/authStore'
 
 const router = createRouter({
   
@@ -36,9 +35,9 @@ const router = createRouter({
       component: FindPasswordPage
     },
     {
-      path: '/managerPage',
-      name: 'ManagerPage',
-      component: ManagerPage
+      path: '/managePage',
+      name: 'ManagePage',
+      component: ManagePage,
     },
     {
       path: '/boardList',
