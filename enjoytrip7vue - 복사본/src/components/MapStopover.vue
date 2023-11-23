@@ -1,10 +1,12 @@
 <template>
-  <h2>받아온 값</h2>
+  <!-- <h2>받아온 값</h2>
   <div>{{ locationX }}</div>
 
   <h2>실제 출력값</h2>
   <div>{{ addrName }}</div>
-  <div>{{ locationX.rowNameValue }}</div>
+  <div>{{ addrX }}</div>
+  <div>{{ addrY }}</div> -->
+
   <br />
   <!-- <div>{{ addrName[daySelect] }}</div>
   <br />
@@ -282,7 +284,7 @@ export default {
 
       // 4. 경로탐색 API 사용요청
       var routeLayer
-      $('#btn_select').click(function () {
+      $('#btn_select').click(() => {
         resettingMap()
         var searchOption = $('#selectLevel').val()
 
@@ -293,6 +295,8 @@ export default {
 
         var param
         if (viaPoints.length != 0) {
+          console.log('출발지')
+          console.log(this.addrY)
           param = JSON.stringify({
             startName: '출발지',
             startX: this.addrY[this.daySelect][0].toString(),

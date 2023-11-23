@@ -17,8 +17,7 @@ const isLoginChange = (check) => {
 
   <logo-bar v-bind:isLogin="isLogin" v-on:call-is-login="isLoginChange"></logo-bar>
 
-  <!-- <my-page></my-page> -->
-  
+  <my-page></my-page>
 
   <router-view v-on:call-is-login="isLoginChange" :key="$route.fullPath"></router-view>
   <!-- <div class="row">
