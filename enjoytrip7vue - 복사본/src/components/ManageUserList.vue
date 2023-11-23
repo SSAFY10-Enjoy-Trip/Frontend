@@ -21,22 +21,39 @@
       >
         <h5 class="suite-bold">🥉{{ user.role }}</h5>
       </div>
-      
     </div>
-    <button @click="managerAssignment(user.email)" class="hover-pointer btn write-board">
+    <button @click="checkAndAssignment(user.email)" class="hover-pointer btn write-board">
       매니저 임명
     </button>
-    
   </div>
 </template>
 
 <script setup>
+
 import http from '@/common/axios.js'
+import { useRouter } from 'vue-router'
 import { useManagerStore } from '@/store/managerStore.js'
 import { useUserStore } from '@/store/userStore.js'
-const { managerList} = useManagerStore()
+import { useAuthStore } from '../store/authStore';
 const { userStore, userList } = useUserStore()
+const { managerList } = useManagerStore()
+const { logout } = useAuthStore()
+const router  = useRouter()
 
+const checkAndAssignment = async (userEmail) => {
+  try {
+    let { data } = await http.get('/checkSession')
+    console.log("checkAndAssignment: "+data.result)
+    if (data.result == 'success') {
+      managerAssignment(userEmail);
+    } else {
+      logout()
+      router.replace("/login")
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
 
 const managerAssignment = async (userEmail) => {
   let assignmentObj = {
@@ -50,13 +67,12 @@ const managerAssignment = async (userEmail) => {
       console.log(data)
       managerList()
       userList()
-    } 
+    }
   } catch (error) {
     console.log('ManageUserListVue: error : ')
     console.log(error)
   }
 }
-
 </script>
 
 <style scoped>
@@ -67,7 +83,7 @@ const managerAssignment = async (userEmail) => {
   object-fit: cover;
   border: #eee solid 1px;
 }
-.list-backgrond{
+.list-backgrond {
   background-color: #f3f3f3;
 }
 

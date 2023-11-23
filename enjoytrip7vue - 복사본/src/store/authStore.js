@@ -66,6 +66,7 @@ export const useAuthStore = defineStore('authStore', () => {
 
     authStore.isLogin = false;
     authStore.name = '';
+    authStore.password = '';
     authStore.profileImageUrl = notLoginUserProfileImageUrl;
 
     // 관리자 권한 설정 해제

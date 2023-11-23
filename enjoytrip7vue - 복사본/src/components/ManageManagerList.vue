@@ -22,7 +22,7 @@
         <h5 class="suite-bold">🥈{{ manager.role }}</h5>
       </div>
     </div>
-    <button @click="managerDisAssignment(manager.email)" class="hover-pointer btn write-board">
+    <button @click="checkAndDisassignment(manager.email)" class="hover-pointer btn write-board">
       매니저 해제
     </button>
   </div>
@@ -30,10 +30,30 @@
 
 <script setup>
 import http from '@/common/axios.js'
+import { useRouter } from 'vue-router'
 import { useManagerStore } from '@/store/managerStore.js'
 import { useUserStore } from '@/store/userStore.js'
+import { useAuthStore } from '../store/authStore';
+
 const { managerStore, managerList} = useManagerStore()
+const { logout } = useAuthStore()
 const { userList } = useUserStore()
+const router  = useRouter()
+
+const checkAndDisassignment = async (managerEmail) => {
+  try {
+    let { data } = await http.get('/checkSession')
+    console.log("checkAndDisassignment: "+data.result)
+    if (data.result == 'success') {
+      managerDisAssignment(managerEmail);
+    } else {
+      logout()
+      router.replace("/login")
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
 
 const managerDisAssignment = async (managerEmail) => {
   console.log(managerEmail)
