@@ -1,10 +1,29 @@
 <template>
-  <div class="container row" style="float: none; margin: 100 auto">
-    <div class="card text-center col-md-3" style="float: none; margin: 0 auto; width: 20rem">
-      <h1>Enjoy Trip</h1>
-      <div class="card-body">
-        <h5 class="card-title">비밀번호 찾기</h5>
-        <div class="input-group input-group-sm mb-3">
+
+<div
+    style="
+      background-image: url('https://i.pinimg.com/originals/13/44/cd/1344cdb8afc60644ab100307da6c3487.gif');
+      background-position: bottom;
+      background-size: cover;
+      height: 100vh;
+    "
+  >
+    <div class="d-flex justify-content-center">
+      <img src="../assets/logo.png" alt="" />
+    </div>
+    <div class="text-center">
+      <span class="p-2 hash-tag suite-bold ps-3 pe-3 me-2"> #일상공유</span
+      ><span class="p-2 hash-tag suite-bold ps-3 pe-3 me-2"> #코스여행</span
+      ><span class="p-2 hash-tag suite-bold ps-3 pe-3 me-2"> #알찬여행</span>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col-12 col-md-3 col-lg-4 col-xl-4"></div>
+      <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4 info-form mt-4 ps-2 pe-2">
+        <div>
+          <h3 class="suite-bold mt-4 text-center">잊고있던 나를 찾아드릴게요!</h3>
+        </div>
+        <div class="mt-4">
           <input
             type="email"
             class="form-control"
@@ -14,9 +33,8 @@
             @input="validateEmail"
             @focus="isEmailFocus = true"
           />
-          <div class="invalid-feedback">올바른 이메일을 입력해주세요.</div>
         </div>
-        <div class="input-group input-group-sm mb-3">
+        <div class="mt-2">
           <input
             type="name"
             class="form-control"
@@ -28,17 +46,22 @@
           />
           <div class="invalid-feedback">이름을 입력해주세요.</div>
         </div>
-        <div class="d-grid gap-2 d-md-block">
-          <button class="btn btn-primary mx-2" type="button" @click="findPassword">
+        <div>
+          <button class="login-btn p-2 h5 suite-bold mt-5" type="button" @click="findPassword">
             이메일 전송
           </button>
-          <button class="btn btn-outline-secondary mx-2" type="button">
-            <router-link to="/login" replace class="nav-link">로그인</router-link>
+        </div>
+        <div class="mb-4">
+          <button class="register-btn suite-regular text-center ps-3 pe-3" type="button">
+            <router-link to="/login" replace class="nav-link">로그인으로 돌아가기</router-link>
           </button>
         </div>
       </div>
+      <div class="col-12 col-md-3 col-lg-4 col-xl-4"></div>
     </div>
   </div>
+
+
 </template>
 
 <script setup>
@@ -121,3 +144,52 @@ const findPassword = async () => {
   }
 }
 </script>
+
+<style>
+.hash-tag {
+  background-color: #ccf9ff;
+  border-radius: 20px;
+  border: 4px solid #0b7280;
+}
+.login-btn {
+  width: 100%;
+  background-color: #0b7280;
+  color: #fff;
+  border-radius: 10px;
+}
+.register-btn {
+  border-radius: 20px;
+  background-color: #ffffff00;
+  color: #0c95d4;
+  border: none;
+}
+.register-btn:hover {
+  background-color: #997e07ad;
+  color: #ffffff;
+  border: none;
+}
+.find-password-btn {
+  border-radius: 20px;
+  background-color: #ffffff00;
+  color: #0c95d4;
+  border: none;
+}
+.find-password-btn:hover {
+  background-color: #997e07ad;
+  color: #ffffff;
+  border: none;
+}
+.info-form {
+  border-radius: 10px;
+  border: 3px solid #037260;
+  background-color: #ffffffb2;
+}
+.email-input {
+  color: #037260;
+  font-size: 20px;
+}
+.password-input {
+  color: #037260;
+  font-size: 20px;
+}
+</style>
