@@ -10,6 +10,10 @@ export const useAuthStore = defineStore('authStore', () => {
     // NavBar
     isLogin: false,
 
+    // 멤버 권한 설정
+    isSupervisor: false,
+    isManager: false,
+
     name: '',
     profileImageUrl: notLoginUserProfileImageUrl,
 
@@ -27,6 +31,13 @@ export const useAuthStore = defineStore('authStore', () => {
     authStore.isLogin = payload.isLogin;
     authStore.name = payload.name;
     authStore.profileImageUrl = payload.profileImageUrl;
+
+    // 관리자일 경우 권한 설정을 위해
+    if(payload.role == "ROLE_SUPERVISOR"){
+      authStore.isSupervisor = true;
+    }else if(payload.role == "ROLE_MANAGER"){
+      authStore.isManager = true;
+    }
 
     // 로그인 후 로그인 화면에 비밀번호 남아있는 것 지우기
     authStore.password = '';
@@ -53,6 +64,10 @@ export const useAuthStore = defineStore('authStore', () => {
     authStore.isLogin = false;
     authStore.name = '';
     authStore.profileImageUrl = notLoginUserProfileImageUrl;
+
+    // 관리자 권한 설정 해제
+    authStore.isSupervisor = false;
+    authStore.isManager = false;
   }
 
   return { authStore, setLogin, setLogout, logout }

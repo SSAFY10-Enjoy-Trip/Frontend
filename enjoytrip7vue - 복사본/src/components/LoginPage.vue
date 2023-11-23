@@ -58,7 +58,7 @@ const login = async () => {
   try {
     let { data } = await http.post('http://localhost:8080/login', loginObj) // 이미 javascript 객체
     if (data.result == 'success') {
-      setLogin({ isLogin: true, name: data.name, profileImageUrl: data.profileImageUrl })
+      setLogin({ isLogin: true, name: data.name, profileImageUrl: data.profileImageUrl, role:data.role})
       router.push('/')
     } else if (data.result == 'fail') {
       alert('이메일 또는 비밀번호를 확인하세요.')

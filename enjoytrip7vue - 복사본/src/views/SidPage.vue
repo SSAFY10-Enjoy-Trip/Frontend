@@ -17,6 +17,12 @@ export default {
 }
 </script>
 
+<script setup>
+import { useAuthStore } from '@/store/authStore.js'
+
+const { authStore } = useAuthStore();
+</script>
+
 <template>
   <div class="m-2">
     <table class="table mb-3 suite-regular">
@@ -44,6 +50,11 @@ export default {
         </tr>
         <tr>
           <button @click="navigateToBoardInsert" class="hover-pointer btn write-board">글작성</button>
+        </tr>
+        <tr>
+          <button v-if="authStore.isManager || authStore.isSupervisor" class="hover-pointer btn write-board">
+            <router-link to="/managerPage" replace class="nav-link">관리자 페이지</router-link>
+          </button>
         </tr>
       </tbody>
     </table>
