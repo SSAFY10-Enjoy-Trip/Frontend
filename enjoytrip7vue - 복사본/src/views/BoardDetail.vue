@@ -1,13 +1,11 @@
 <script setup>
-import MapStopover from '@/components/MapStopover.vue'
-import SidePage from './SidPage.vue'
 import { useAuthStore } from '@/store/authStore'
-const { authStore } = useAuthStore()
-console.log('어쓰쓰토아', authStore.isLogin)
-isLogin.value = authStore.isLogin
 </script>
 
 <script>
+import MapStopover from '@/components/MapStopover.vue'
+import TopBanner from '../components/TopBanner.vue'
+import SidePage from './SidPage.vue'
 import { ref, reactive } from 'vue'
 let boardNum = ref(0)
 import http from '@/common/axios.js'
@@ -55,7 +53,11 @@ const insertTripBoard = async () => {
   }
 }
 export default {
-  setup() {},
+  setup() {
+    const { authStore } = useAuthStore()
+    console.log('어쓰쓰토아', authStore.isLogin)
+    isLogin.value = authStore.isLogin
+  },
   components: {
     MapStopover
   },
@@ -180,6 +182,7 @@ export default {
 </script>
 
 <template>
+  <!-- <top-banner></top-banner> -->
   <div class="row">
     <div class="col-xl-1"></div>
     <div class="col-12 col-sm-12 col-md-3 col col-lg-3 col-xl-2">

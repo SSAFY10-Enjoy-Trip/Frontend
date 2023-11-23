@@ -398,7 +398,7 @@ export default {
 
                 if (properties.pointType == 'S') {
                   //출발지 마커
-                  markerImg = 'https://cdn-icons-png.flaticon.com/512/1409/1409083.png'
+                  markerImg = 'https://cdn-icons-png.flaticon.com/512/2466/2466811.png'
                   size = new Tmapv2.Size(24, 38)
                 } else if (properties.pointType == 'E') {
                   //도착지 마커
