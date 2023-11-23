@@ -24,9 +24,11 @@ export const useAuthStore = defineStore('authStore', () => {
 
   // getter 는 생략 직접 사용하는 걸로
   const setLogin = (payload) => {
-    sessionStorage.setItem("isLogin", "true");
+    sessionStorage.setItem("isLogin", true);
+    sessionStorage.setItem("memberId", payload.memberId)
     sessionStorage.setItem("name", payload.name);
     sessionStorage.setItem("profileImageUrl", payload.profileImageUrl);
+    sessionStorage.setItem("role", payload.role);
 
     authStore.isLogin = payload.isLogin;
     authStore.name = payload.name;
@@ -41,7 +43,6 @@ export const useAuthStore = defineStore('authStore', () => {
 
     // 로그인 후 로그인 화면에 비밀번호 남아있는 것 지우기
     authStore.password = '';
-    // console.log(authStore)
   }
 
   const logout = async () => {
@@ -58,8 +59,10 @@ export const useAuthStore = defineStore('authStore', () => {
 
   const setLogout = () => {
     sessionStorage.removeItem("isLogin");
+    sessionStorage.removeItem("memberId");
     sessionStorage.removeItem("name");
     sessionStorage.removeItem("profileImageUrl");
+    sessionStorage.removeItem("role");
 
     authStore.isLogin = false;
     authStore.name = '';
