@@ -16,8 +16,10 @@
             <h4>{{ nickname }}</h4>
           </div>
           <div class="suite-bold d-flex justify-content-center">
-            <button v-show="!isMyProfile" class="btn-follow text-center ps-3 pe-3">팔로우</button>
-            <button v-show="!isMyProfile" class="btn-unfollow text-center ps-3 pe-3">
+            <button v-show="!isMyProfile && !isFollow" class="btn-follow text-center ps-3 pe-3">
+              팔로우
+            </button>
+            <button v-show="!isMyProfile && isFollow" class="btn-unfollow text-center ps-3 pe-3">
               언팔로우
             </button>
           </div>
@@ -112,8 +114,6 @@ export default {
       nickname: '사용자 닉네임',
       email: 'user@example.com',
       position: '사용자 직책',
-      followersCount: 100, // 예시 값
-      followingCount: 50, // 예시 값
       isEditingNickname: false,
       editedNickname: '',
       memgerId: 0,
@@ -138,7 +138,12 @@ export default {
         title: [],
         locationStart: [],
         locationEnd: []
-      }
+      },
+      // 팔로워, 팔로잉 수
+      followersCount: 100, // 예시 값
+      followingCount: 50, // 예시 값
+      // 팔로우 여부
+      isFollow: false
     }
   },
   created() {
@@ -150,6 +155,7 @@ export default {
       .then(() => this.checkSameUser())
       .then(() => this.getWriteBoard())
       .then(() => this.getLikeBoard())
+      .then(() => this.checkFollow())
       .catch((error) => console.error(error))
   },
   methods: {
@@ -164,8 +170,6 @@ export default {
       }
       try {
         let { data } = await http.get('/member', memberObj)
-        console.log('가져온 멤버정보')
-        console.log(data)
         this.nickname = data.result.name
         this.profilePicture = data.result.profileImageUrl
         this.memgerId = data.result.memberId
@@ -174,25 +178,27 @@ export default {
       }
     },
     async getUserFollower() {
+      let memberObj = {
+        params: {
+          userEmailFrom: this.email
+        }
+      }
       try {
-        // let url = `/followers/${this.email}`
-        // let { data } = await http.get(url)
-        // console.log('가져온 멤버정보')
-        // console.log(data)
-        // this.nickname = data.result.name
-        // this.profilePicture = data.result.profileImageUrl
+        let { data } = await http.get('/follow/followers', memberObj)
+        this.followersCount = data.result
       } catch (error) {
         console.log(error)
       }
     },
     async getUserFollowing() {
+      let memberObj = {
+        params: {
+          userEmailFrom: this.email
+        }
+      }
       try {
-        // let url = `/followings/${this.email}`
-        // let { data } = await http.get(url)
-        // console.log('가져온 멤버정보')
-        // console.log(data)
-        // this.nickname = data.result.name
-        // this.profilePicture = data.result.profileImageUrl
+        let { data } = await http.get('/follow/followings', memberObj)
+        this.followingCount = data.result
       } catch (error) {
         console.log(error)
       }
@@ -203,26 +209,25 @@ export default {
       }
       try {
         let { data } = await http.post('/tripBoard/like', memberObj)
-        console.log('.게시글')
-        console.log(JSON.parse(data.board))
+        let cnt = 0
         JSON.parse(data.board).forEach((element) => {
+          if (cnt == 3) {
+            return
+          }
           this.likeBoardList.boardId.push(element.boardId)
           this.likeBoardList.likeCount.push(element.likeCount)
           this.likeBoardList.viewCount.push(element.readCount)
           this.likeBoardList.writeTime.push(element.regDt.slice(0, 10).replaceAll('-', '.'))
           this.likeBoardList.title.push(element.title)
           let locationTemp = JSON.parse(element.location)
-          console.log('로템')
-          console.log(locationTemp)
           this.likeBoardList.locationStart.push(locationTemp.rowNameValue[1][0])
           this.likeBoardList.locationEnd.push(
             locationTemp.rowNameValue[locationTemp.rowCount][
               locationTemp.rowNameValue[locationTemp.rowCount].length - 1
             ]
           )
+          cnt++
         })
-        console.log('다넣었당')
-        console.log(this.likeBoardList)
       } catch (error) {
         console.log(error)
       }
@@ -233,36 +238,59 @@ export default {
       }
       try {
         let { data } = await http.post('/tripBoard/member', memberObj)
-        console.log('.게시글')
-        console.log(JSON.parse(data.board))
+
+        let cnt = 0
         JSON.parse(data.board).forEach((element) => {
+          if (cnt == 3) {
+            return
+          }
           this.writeBoardList.boardId.push(element.boardId)
           this.writeBoardList.likeCount.push(element.likeCount)
           this.writeBoardList.viewCount.push(element.readCount)
           this.writeBoardList.writeTime.push(element.regDt.slice(0, 10).replaceAll('-', '.'))
           this.writeBoardList.title.push(element.title)
           let locationTemp = JSON.parse(element.location)
-          console.log('로템')
-          console.log(locationTemp)
           this.writeBoardList.locationStart.push(locationTemp.rowNameValue[1][0])
           this.writeBoardList.locationEnd.push(
             locationTemp.rowNameValue[locationTemp.rowCount][
               locationTemp.rowNameValue[locationTemp.rowCount].length - 1
             ]
           )
+          cnt++
         })
-        console.log('다넣었당')
-        console.log(this.likeBoardList)
       } catch (error) {
         console.log(error)
       }
     },
     checkSameUser() {
       const { authStore } = useAuthStore()
-      console.log('어쓰쓰토아', authStore.isLogin)
       let myEmail = authStore.email
       if (this.email == myEmail) {
         this.isMyProfile = true
+      }
+    },
+    async checkFollow() {
+      // isFollow
+      const { authStore } = useAuthStore()
+      let myEmail = authStore.email
+
+      let memberObj = {
+        params: {
+          userEmailFrom: myEmail,
+          userEmailTo: this.email
+        }
+      }
+      try {
+        let { data } = await http.get('/follow/following', memberObj)
+        if (data.result == 'success') {
+          this.isFollow = true
+        } else {
+          this.isFollow = false
+        }
+
+        console.log('팔로우 했니? : ', this.isFollow)
+      } catch (error) {
+        console.log(error)
       }
     },
     editNickname() {
@@ -276,6 +304,7 @@ export default {
     },
     editPassword() {
       // 비밀번호 수정 로직 추가
+      alert('비밀번호가 변경되었습니다!')
     }
   }
 }
