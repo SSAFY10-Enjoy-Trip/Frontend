@@ -7,11 +7,11 @@
   <div>{{ addrX }}</div>
   <div>{{ addrY }}</div> -->
 
-  <br />
+  <!-- <br /> -->
   <!-- <div>{{ addrName[daySelect] }}</div>
   <br />
   <div>{{ daySelect }}</div> -->
-  <br />
+  <!-- <br /> -->
 
   <div class="left-space-10">
     <button

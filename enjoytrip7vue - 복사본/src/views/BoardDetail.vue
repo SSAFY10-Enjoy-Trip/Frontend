@@ -23,6 +23,7 @@ let regDt = ref('')
 let readCount = ref('')
 let likeCount = ref('')
 let memberName = ref('')
+let memberEmail = ref('')
 let memberId = ref(0)
 let memberProfileImageUrl = ref('')
 
@@ -42,6 +43,7 @@ const insertTripBoard = async () => {
     likeCount.value = data.likeCount
     memberName.value = data.member.name
     memberId.value = data.memberId
+    memberEmail.value = data.member.email
     memberProfileImageUrl.value = data.memberProfileImageUrl
 
     locationX = JSON.parse(location)
@@ -69,6 +71,7 @@ export default {
       allLocation,
       memberName,
       memberId,
+      memberEmail,
       memberProfileImageUrl,
       regDt,
       readCount,
@@ -103,6 +106,9 @@ export default {
     fetchDataFromServer(boardNum) {
       // 서버에게 boardNum을 전달하고 데이터를 가져오는 비동기 작업 수행
       // axios 코드 작성 위치
+    },
+    navigateToMyPage() {
+      this.$router.push(`/myPage/${memberEmail.value}`)
     },
     clickLike() {
       // 좋아요 했으면
@@ -194,12 +200,14 @@ export default {
         <div class="board-content mt-2 p-2">{{ content }}</div>
 
         <div class="mt-5">
-          <img
-            class="userProfile p-1"
-            src="https://samg.net/2020/wp-content/uploads/2020/08/chachaping_011.png"
-          />
-          <span class="comment-user">차차핑</span>
-          <span>님의 글 더보기</span> <br />
+          <button class="mypage-btn" v-on:click="navigateToMyPage">
+            <img
+              class="userProfile p-1"
+              src="https://samg.net/2020/wp-content/uploads/2020/08/chachaping_011.png"
+            />
+            <span class="comment-user">{{ memberName }}</span>
+            <span>님의 글 더보기</span> <br />
+          </button>
           <div class="vertical-centering mt-2">
             <button class="likeBtnBack" @click="clickLike">
               <img
@@ -391,5 +399,9 @@ h5 {
     opacity: 1;
     transform: scale(1);
   }
+}
+.mypage-btn {
+  background-color: #ffffff00;
+  border: none;
 }
 </style>

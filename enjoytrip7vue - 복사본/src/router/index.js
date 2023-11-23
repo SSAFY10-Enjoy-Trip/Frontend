@@ -10,9 +10,9 @@ import BoardFollow from '@/views/BoardFollow.vue'
 import BoardHot from '@/views/BoardHot.vue'
 import BoardDetail from '@/views/BoardDetail.vue'
 import BoardInsert from '@/views/BoardInsert.vue'
+import MyPage from '@/views/MyPage.vue'
 
 const router = createRouter({
-  
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
@@ -37,7 +37,7 @@ const router = createRouter({
     {
       path: '/managePage',
       name: 'ManagePage',
-      component: ManagePage,
+      component: ManagePage
     },
     {
       path: '/boardList',
@@ -65,6 +65,11 @@ const router = createRouter({
       path: '/bordDetail/:boardNum',
       name: 'bordDetail',
       component: BoardDetail
+    },
+    {
+      path: '/myPage/:memberEmail',
+      name: 'myPage',
+      component: MyPage
     }
   ]
 })

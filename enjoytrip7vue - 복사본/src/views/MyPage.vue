@@ -16,8 +16,10 @@
             <h4>{{ nickname }}</h4>
           </div>
           <div class="suite-bold d-flex justify-content-center">
-            <button v-show="true" class="btn-follow text-center ps-3 pe-3">팔로우</button>
-            <button v-show="true" class="btn-unfollow text-center ps-3 pe-3">언팔로우</button>
+            <button v-show="!isMyProfile" class="btn-follow text-center ps-3 pe-3">팔로우</button>
+            <button v-show="!isMyProfile" class="btn-unfollow text-center ps-3 pe-3">
+              언팔로우
+            </button>
           </div>
           <hr />
 
@@ -44,7 +46,6 @@
                 수정
               </button>
             </span>
-            <span class="h5 text-center"><strong> 직책: </strong> {{ position }}</span>
             <span class="h5 text-center"><strong> Email: </strong> {{ email }}</span>
             <span class="h5 text-center">
               <strong> PW: </strong>
@@ -61,24 +62,38 @@
         <div class="info-section mt-3 m-4 mb-2 p-4">
           <h3 class="suite-bold">📝 작성한 글</h3>
           <hr />
-          <div class="info-section gray-line p-3 mb-1">
-            <h5 class="suite-bold">반짝반짝 빛 따라 걸어요</h5>
-            <div class="suite-regular">🚩 출발 : 부산 사하구 다대로 548</div>
-            <div class="suite-regular">🏁 도착 : 부산 사하구 장림시장9길 54</div>
-          </div>
-          <div class="info-section gray-line p-3 mb-1">
-            <h5 class="suite-bold">반짝반짝 빛 따라 걸어요</h5>
-            <div class="suite-regular">🚩 출발 : 부산 사하구 다대로 548</div>
-            <div class="suite-regular">🏁 도착 : 부산 사하구 장림시장9길 54</div>
+          <div
+            class="info-section gray-line p-3 mb-1"
+            v-for="(item, index) in writeBoardList.boardId"
+            :key="index"
+          >
+            <h6>
+              <span>💗 {{ writeBoardList.likeCount[index] }} </span>
+              <span class="left-space-6">👀 {{ writeBoardList.viewCount[index] }}</span>
+              <span class="left-space-10">📆 {{ writeBoardList.writeTime[index] }}</span>
+            </h6>
+            <h5 class="suite-bold">{{ writeBoardList.title[index] }}</h5>
+            <div class="suite-regular">🚩 출발 : {{ writeBoardList.locationStart[index] }}</div>
+            <div class="suite-regular">🏁 도착 : {{ writeBoardList.locationEnd[index] }}</div>
           </div>
         </div>
-        <div class="info-section mt-3 m-4 mb-4 p-4">
+
+        <div class="info-section mt-3 m-4 mb-2 p-4">
           <h3 class="suite-bold">💗 좋아요한 글</h3>
           <hr />
-          <div class="info-section gray-line p-3 mb-1">
-            <h5 class="suite-bold">반짝반짝 빛 따라 걸어요</h5>
-            <div class="suite-regular">🚩 출발 : 부산 사하구 다대로 548</div>
-            <div class="suite-regular">🏁 도착 : 부산 사하구 장림시장9길 54</div>
+          <div
+            class="info-section gray-line p-3 mb-1"
+            v-for="(item, index) in likeBoardList.boardId"
+            :key="index"
+          >
+            <h6>
+              <span>💗 {{ likeBoardList.likeCount[index] }} </span>
+              <span class="left-space-6">👀 {{ likeBoardList.viewCount[index] }}</span>
+              <span class="left-space-10">📆 {{ likeBoardList.writeTime[index] }}</span>
+            </h6>
+            <h5 class="suite-bold">{{ likeBoardList.title[index] }}</h5>
+            <div class="suite-regular">🚩 출발 : {{ likeBoardList.locationStart[index] }}</div>
+            <div class="suite-regular">🏁 도착 : {{ likeBoardList.locationEnd[index] }}</div>
           </div>
         </div>
       </div>
@@ -88,6 +103,8 @@
 </template>
 
 <script>
+import http from '@/common/axios.js'
+import { useAuthStore } from '@/store/authStore'
 export default {
   data() {
     return {
@@ -98,12 +115,155 @@ export default {
       followersCount: 100, // 예시 값
       followingCount: 50, // 예시 값
       isEditingNickname: false,
-      editedNickname: ''
+      editedNickname: '',
+      memgerId: 0,
+      // 조회한 게 내 프로필인가?
+      isMyProfile: false,
+      // 좋아요 게시글 목록
+      likeBoardList: {
+        boardId: [],
+        likeCount: [],
+        viewCount: [],
+        writeTime: [],
+        title: [],
+        locationStart: [],
+        locationEnd: []
+      },
+      // 좋아요 게시글 목록
+      writeBoardList: {
+        boardId: [],
+        likeCount: [],
+        viewCount: [],
+        writeTime: [],
+        title: [],
+        locationStart: [],
+        locationEnd: []
+      }
     }
+  },
+  created() {
+    // 동적 세그먼트의 값인 boardNum을 읽어옴
+    this.email = this.$route.params.memberEmail
+    this.getUserProfile()
+      .then(() => this.getUserFollower())
+      .then(() => this.getUserFollowing())
+      .then(() => this.checkSameUser())
+      .then(() => this.getWriteBoard())
+      .then(() => this.getLikeBoard())
+      .catch((error) => console.error(error))
   },
   methods: {
     handleProfilePictureClick() {
       // 프로필 사진 변경 로직 추가
+    },
+    async getUserProfile() {
+      let memberObj = {
+        params: {
+          email: this.email
+        }
+      }
+      try {
+        let { data } = await http.get('/member', memberObj)
+        console.log('가져온 멤버정보')
+        console.log(data)
+        this.nickname = data.result.name
+        this.profilePicture = data.result.profileImageUrl
+        this.memgerId = data.result.memberId
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getUserFollower() {
+      try {
+        // let url = `/followers/${this.email}`
+        // let { data } = await http.get(url)
+        // console.log('가져온 멤버정보')
+        // console.log(data)
+        // this.nickname = data.result.name
+        // this.profilePicture = data.result.profileImageUrl
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getUserFollowing() {
+      try {
+        // let url = `/followings/${this.email}`
+        // let { data } = await http.get(url)
+        // console.log('가져온 멤버정보')
+        // console.log(data)
+        // this.nickname = data.result.name
+        // this.profilePicture = data.result.profileImageUrl
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getLikeBoard() {
+      let memberObj = {
+        member_id: this.memgerId
+      }
+      try {
+        let { data } = await http.post('/tripBoard/like', memberObj)
+        console.log('.게시글')
+        console.log(JSON.parse(data.board))
+        JSON.parse(data.board).forEach((element) => {
+          this.likeBoardList.boardId.push(element.boardId)
+          this.likeBoardList.likeCount.push(element.likeCount)
+          this.likeBoardList.viewCount.push(element.readCount)
+          this.likeBoardList.writeTime.push(element.regDt.slice(0, 10).replaceAll('-', '.'))
+          this.likeBoardList.title.push(element.title)
+          let locationTemp = JSON.parse(element.location)
+          console.log('로템')
+          console.log(locationTemp)
+          this.likeBoardList.locationStart.push(locationTemp.rowNameValue[1][0])
+          this.likeBoardList.locationEnd.push(
+            locationTemp.rowNameValue[locationTemp.rowCount][
+              locationTemp.rowNameValue[locationTemp.rowCount].length - 1
+            ]
+          )
+        })
+        console.log('다넣었당')
+        console.log(this.likeBoardList)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getWriteBoard() {
+      let memberObj = {
+        member_id: this.memgerId
+      }
+      try {
+        let { data } = await http.post('/tripBoard/member', memberObj)
+        console.log('.게시글')
+        console.log(JSON.parse(data.board))
+        JSON.parse(data.board).forEach((element) => {
+          this.writeBoardList.boardId.push(element.boardId)
+          this.writeBoardList.likeCount.push(element.likeCount)
+          this.writeBoardList.viewCount.push(element.readCount)
+          this.writeBoardList.writeTime.push(element.regDt.slice(0, 10).replaceAll('-', '.'))
+          this.writeBoardList.title.push(element.title)
+          let locationTemp = JSON.parse(element.location)
+          console.log('로템')
+          console.log(locationTemp)
+          this.writeBoardList.locationStart.push(locationTemp.rowNameValue[1][0])
+          this.writeBoardList.locationEnd.push(
+            locationTemp.rowNameValue[locationTemp.rowCount][
+              locationTemp.rowNameValue[locationTemp.rowCount].length - 1
+            ]
+          )
+        })
+        console.log('다넣었당')
+        console.log(this.likeBoardList)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    checkSameUser() {
+      const { authStore } = useAuthStore()
+      console.log('어쓰쓰토아', authStore.isLogin)
+      let myEmail = authStore.email
+      if (this.email == myEmail) {
+        this.isMyProfile = true
+      }
     },
     editNickname() {
       this.isEditingNickname = true
