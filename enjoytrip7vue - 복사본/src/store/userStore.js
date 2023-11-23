@@ -52,9 +52,7 @@ export const useUserStore = defineStore('userStore', () => {
     };
 
     try {
-       let { data } = await http.get("/role/managerList", { params }); // params: params shorthand property, let response 도 제거
-       console.log("userStore: data : ");
-       console.log(data);
+       let { data } = await http.get("/role/userList", { params }); // params: params shorthand property, let response 도 제거
        if (data.result == "login") {
           router.replace("/login");
        } else {

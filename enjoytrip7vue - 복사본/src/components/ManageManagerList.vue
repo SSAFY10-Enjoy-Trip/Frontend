@@ -1,61 +1,53 @@
 <template>
   <div
-    v-for="(user, index) in userStore.list.result"
+    v-for="(manager, index) in managerStore.list.result"
     :key="index"
-    @click=""
     class="m-2 suite-regular board-content p-3"
   >
     <div class="row">
       <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-        <h4 class="suite-bold">{{ user.email }}</h4>
-        <h4 class="suite-bold">{{ user.name }}</h4>
-        <h4 class="suite-bold">{{ user.profileImageUrl }}</h4>
-        <h4 class="suite-bold">{{ user.role }}</h4>
+        <h4 class="suite-bold">{{ manager.name }}</h4>
+      </div>
+      <hr />
+      <div
+        class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12"
+        style="display: inline-flex; align-items: flex-start; justify-content: flex-end"
+      >
+        <h5 class="suite-bold">{{ manager.email }}</h5>
       </div>
       <div
         class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12"
         style="display: flex; align-items: flex-end; justify-content: flex-end"
       >
-        1 | 2 | 조회 3
+        <h5 class="suite-bold">🥈{{ manager.role }}</h5>
       </div>
     </div>
-
-    <hr />
-    <div class="row">
-      <div><span class="suite-bold">🚩 출발 : </span> 1</div>
-      <div><span class="suite-bold">🏁 도착 : </span> 2</div>
-    </div>
-    <div class="row">
-      <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">🕑 여행일 : 3 일</div>
-      <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
-        👜 경유지 : 4 개
-      </div>
-    </div>
+    <button @click="managerDisAssignment(manager.email)" class="hover-pointer btn write-board">
+      매니저 해제
+    </button>
   </div>
 </template>
 
 <script setup>
 import http from '@/common/axios.js'
+import { useManagerStore } from '@/store/managerStore.js'
 import { useUserStore } from '@/store/userStore.js'
-import { useAuthStore } from '@/store/authStore.js'
-const { userStore, setUserDetail } = useUserStore()
-const { logout } = useAuthStore()
+const { managerStore, managerList} = useManagerStore()
+const { userList } = useUserStore()
 
-//  const props = defineProps(['detailModal'])
-// const emit = defineEmits(['call-parent-show-detail'])
-const userDetail = async (userEmail) => {
+const managerDisAssignment = async (managerEmail) => {
+  console.log(managerEmail)
+  let assignmentObj = {
+    email: managerEmail
+  }
+
   try {
-    let { data } = await http.get("/member/" + userEmail);
-
-    if (data.result == 'login') {
-        logout()
-    } else {
-      let { dto } = data
-      setUserDetail(dto)
-
-      // props.detailModal.show();
-    //   emit('call-parent-show-detail')
-    }
+    let { data } = await http.put('http://localhost:8080/role/disAssignment', assignmentObj)
+    if (data.result == 'success') {
+      console.log(data)
+      managerList()
+      userList()
+    } 
   } catch (error) {
     console.log('ManageManagerListVue: error : ')
     console.log(error)
@@ -64,6 +56,29 @@ const userDetail = async (userEmail) => {
 </script>
 
 <style scoped>
+.user-profile {
+  border-radius: 100%;
+  width: 55px;
+  height: 55px;
+  object-fit: cover;
+  border: #eee solid 1px;
+}
+.list-backgrond {
+  background-color: #f3f3f3;
+}
+
+.bar-content:hover {
+  background-color: #e6f8ff;
+}
+.write-board {
+  background-color: #0f7c51;
+  color: #fff;
+  width: 100%;
+}
+.write-board:hover {
+  background-color: #065938;
+}
+
 table {
   border: 1px solid #eee;
   border-radius: 6px;

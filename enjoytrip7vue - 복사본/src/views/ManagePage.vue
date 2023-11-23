@@ -19,7 +19,7 @@
         <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
           <div class="mt-2">
             <div class="board-content">
-              <h3 class="jalnan-gothic" style="display: inline">🔥유저 관리</h3>
+              <h3 class="jalnan-gothic" style="display: inline">💕유저 관리</h3>
             </div>
             <hr />
             <manage-user-list></manage-user-list>
@@ -38,11 +38,14 @@ import TopBanner from '../components/TopBanner.vue'
 import ManageManagerList from '../components/ManageManagerList.vue'
 import ManageUserList from '../components/ManageUserList.vue'
 import { useAuthStore } from '@/store/authStore.js'
+import { useManagerStore } from '@/store/managerStore.js'
 import { useUserStore } from '@/store/userStore.js'
 
+const {managerStore, managerList } = useManagerStore();
 const {userStore, userList } = useUserStore();
 const { authStore } = useAuthStore()
 
+managerList();
 userList();
 // // basic
 // import { ref, onMounted } from 'vue'
