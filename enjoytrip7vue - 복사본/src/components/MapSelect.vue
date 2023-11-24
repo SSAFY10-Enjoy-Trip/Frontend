@@ -1,19 +1,21 @@
 <template>
   <div class="row">
     <div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8">
-      <div class="m-2 p-4" style="border: #eee 1px solid; background-color: #fafafa;">
+      <div class="m-2 p-4" style="border: #eee 1px solid; background-color: #fafafa">
         <div>
-          <body onload="initTmap()" class="mb-3"  style="background-color: #fafafa;">
+          <body :on-load="initTmap" class="mb-3" style="background-color: #fafafa">
             <div class="text-center">
               <h2 class="jalnan-gothic"># 나만의 코스 알리기</h2>
-              <h4 class="suite-regular">핀을 움직이고, <span style="background-color: #b2e98f;">장소추가</span>를 통해 코스에 등록하세요!</h4>
+              <h4 class="suite-regular">
+                핀을 움직이고, <span style="background-color: #b2e98f">장소추가</span>를 통해 코스에
+                등록하세요!
+              </h4>
             </div>
 
             <hr />
             <!-- 맵 생성 실행 -->
-            <div class="d-flex justify-content-center" >
-            <div id="map_div"></div>
-
+            <div class="d-flex justify-content-center">
+              <div id="map_div"></div>
             </div>
           </body>
           <img src="../assets/boardNoti.png" alt="" class="width-100" />
@@ -21,9 +23,9 @@
       </div>
     </div>
     <div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
-      <div class="p-3 schedule-container" > 
-        <h3 class="suite-bold text-center p-1" style="background-color: #fff;">일정등록</h3>
-        <hr>
+      <div class="p-3 schedule-container">
+        <h3 class="suite-bold text-center p-1" style="background-color: #fff">일정등록</h3>
+        <hr />
         <button
           v-for="(item, index) in rowCount"
           :key="index"
@@ -57,7 +59,7 @@
               💠 장소 {{ idx + 1 }}
             </td>
             <td class="p-2">{{ item }}</td>
-            <td class=" p-1">
+            <td class="p-1">
               <button @click="removePlace(idx)" class="btn suite-bold" id="delete-place">X</button>
             </td>
           </tr>
@@ -246,29 +248,6 @@ const router = useRouter()
 let tripBoardTitle = ref('')
 let tripBoardContent = ref('')
 
-const insertTripBoard = async () => {
-  let boardObj = {
-    title: tripBoardTitle.value,
-    content: tripBoardContent.value,
-    location: JSON.stringify(rowData)
-  }
-  try {
-    let { data } = await http.post('/tripBoard', boardObj)
-    console.log(data)
-
-    if (data.board == 'SUCCESS') {
-      // BoardView.vue 페이지 이동
-      // router.push('/board')
-      // this.$router.push({ path: '/bordAll' });
-      router.push({ path: '/bordAll' }) // 여기서 this.$router 대신 router를 사용
-    } else if (data.board == 'FAIL') {
-      alert('게시판 등록 실패')
-    }
-  } catch (error) {
-    console.log(error)
-  }
-}
-
 export default {
   setup() {
     stopoverAddres.length = 0
@@ -287,7 +266,6 @@ export default {
       rowData,
       selectRow,
       changeBackground,
-      insertTripBoard,
       tripBoardTitle,
       tripBoardContent,
       router
@@ -342,6 +320,25 @@ export default {
 
         marker1.getPosition()
       })
+    },
+    async insertTripBoard() {
+      let boardObj = {
+        title: tripBoardTitle.value,
+        content: tripBoardContent.value,
+        location: JSON.stringify(rowData)
+      }
+      try {
+        let { data } = await http.post('/tripBoard', boardObj)
+        console.log(data)
+
+        if (data.Board == 'SUCCESS') {
+          this.$router.push({ path: '/bordAll' })
+        } else if (data.board == 'FAIL') {
+          alert('게시판 등록 실패')
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }
@@ -391,7 +388,6 @@ table tr {
   position: relative;
   top: 1px;
 }
-
 
 .board-content {
   border: #888 1px solid;
