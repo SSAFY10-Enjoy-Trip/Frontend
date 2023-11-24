@@ -5,7 +5,7 @@ export default {
     return {
       userName: ref('로그인 후 이용하세요'),
       userEmail: ref(''),
-      userProfile: ref('src/assets/noProfile.png'),
+      userProfile: ref('/src/assets/noProfile.png'),
       userLogin: ref(false)
     }
   },
