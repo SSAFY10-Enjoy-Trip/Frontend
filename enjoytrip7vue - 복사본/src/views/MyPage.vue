@@ -16,10 +16,18 @@
             <h4>{{ nickname }}</h4>
           </div>
           <div class="suite-bold d-flex justify-content-center">
-            <button v-show="!isMyProfile && !isFollow" class="btn-follow text-center ps-3 pe-3">
+            <button
+              v-on:click="userFollow"
+              v-show="!isMyProfile && !isFollow"
+              class="btn-follow text-center ps-3 pe-3"
+            >
               팔로우
             </button>
-            <button v-show="!isMyProfile && isFollow" class="btn-unfollow text-center ps-3 pe-3">
+            <button
+              v-on:click="userUnfollow"
+              v-show="!isMyProfile && isFollow"
+              class="btn-unfollow text-center ps-3 pe-3"
+            >
               언팔로우
             </button>
           </div>
@@ -51,7 +59,7 @@
             <span class="h5 text-center"><strong> Email: </strong> {{ email }}</span>
             <span class="h5 text-center">
               <strong> PW: </strong>
-              <input type="password" class="input-area text-center" v-model="password"/>
+              <input type="password" class="input-area text-center" v-model="password" />
               <button @click="checkAndChangePassword" class="change-btn left-space-6">변경</button>
             </span>
             <span class="h5 text-center">
@@ -106,6 +114,7 @@
 
 <script>
 import http from '@/common/axios.js'
+import { ref, reactive } from 'vue'
 import { useAuthStore } from '@/store/authStore'
 
 export default {
@@ -142,8 +151,8 @@ export default {
         locationEnd: []
       },
       // 팔로워, 팔로잉 수
-      followersCount: 100, // 예시 값
-      followingCount: 50, // 예시 값
+      followersCount: ref(0), // 예시 값
+      followingCount: ref(0), // 예시 값
       // 팔로우 여부
       isFollow: false
     }
@@ -311,7 +320,7 @@ export default {
         let { data } = await http.get('/checkSession')
         if (data.result == 'success') {
           this.changePassword()
-          this.password = '';
+          this.password = ''
         }
       } catch (error) {
         authStore.logout()
@@ -330,9 +339,51 @@ export default {
         if (data.result == 'success') {
           alert('비밀번호가 변경되었습니다!')
           authStore.logout()
-          this.password = '';
-        }else{
-          alert("비밀번호 변경 과정에 문제가 발생했습니다. 다시 시도하세요.")
+          this.password = ''
+        } else {
+          alert('비밀번호 변경 과정에 문제가 발생했습니다. 다시 시도하세요.')
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async userFollow() {
+      const { authStore } = useAuthStore()
+      let myEmail = authStore.email
+
+      let memberObj = {
+        userEmailFrom: myEmail,
+        userEmailTo: this.email
+      }
+      try {
+        let { data } = await http.post('/follow/follow', memberObj)
+        if (data.result == 'success') {
+          this.isFollow = true
+          alert(this.nickname + '님을 팔로우 하였습니다.')
+          this.followersCount++
+        } else {
+          this.isFollow = false
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async userUnfollow() {
+      const { authStore } = useAuthStore()
+      let myEmail = authStore.email
+
+      let memberObj = {
+        userEmailFrom: myEmail,
+        userEmailTo: this.email
+      }
+      try {
+        let { data } = await http.post('/follow/unfollow', memberObj)
+        if (data.result == 'success') {
+          this.isFollow = false
+          alert(this.nickname + '님을 언팔로우 하였습니다.')
+          this.followersCount--
+        } else {
+          this.isFollow = true
         }
       } catch (error) {
         console.log(error)
