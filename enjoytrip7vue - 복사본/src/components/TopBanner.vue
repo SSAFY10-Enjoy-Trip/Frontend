@@ -14,9 +14,14 @@
             <div class="col-md-12">
               <div class="block text-center">
                 <div class="text-black suite-bold h5">함께 나눠 더 즐거운</div>
-                <h1 class="text-capitalize suite-extrabold mb-4 text-lg glow-text p-2" id="glowText"> *✧반짝이는 하루들✧* </h1>
+                <h1
+                  class="text-capitalize suite-extrabold mb-4 text-lg glow-text p-2"
+                  id="glowText"
+                >
+                  *✧반짝이는 하루들✧*
+                </h1>
                 <ul class="list-inline">
-                  <li class="list-inline-item"><a href="#" class="text-white">ㄴㄹㅇ</a></li>
+                  <li class="list-inline-item"><a href="#" class="text-white"></a></li>
                 </ul>
               </div>
             </div>
@@ -31,18 +36,22 @@
 export default {
   methods: {
     glowEffect(element, duration) {
-      const textArray = element.textContent.split('');
-      const newText = textArray.map((char, index) => {
-        return `<span style="animation: glow ${duration}s ease ${index * 0.1}s infinite">${char}</span>`;
-      }).join('');
-      element.innerHTML = newText;
+      const textArray = element.textContent.split('')
+      const newText = textArray
+        .map((char, index) => {
+          return `<span style="animation: glow ${duration}s ease ${
+            index * 0.1
+          }s infinite">${char}</span>`
+        })
+        .join('')
+      element.innerHTML = newText
     }
   },
   mounted() {
-    const glowText = this.$el.querySelector('#glowText');
-    this.glowEffect(glowText, 2); // 2초 동안 효과 적용
+    const glowText = this.$el.querySelector('#glowText')
+    this.glowEffect(glowText, 2) // 2초 동안 효과 적용
   }
-};
+}
 </script>
 
 <style>
@@ -52,8 +61,8 @@ export default {
   color: #333;
   display: inline-block;
   overflow: hidden;
-    outline: 3px solid #ffffff;
-    background-color: #ffffff26;
+  outline: 3px solid #ffffff;
+  background-color: #ffffff26;
 }
 
 @keyframes glow {
@@ -63,8 +72,8 @@ export default {
     transform: scale(1);
   }
   50% {
-    color: #2e0072ed; 
-    text-shadow: 0 0 20px #ffffff; 
+    color: #2e0072ed;
+    text-shadow: 0 0 20px #ffffff;
     transform: scale(3);
   }
   100% {

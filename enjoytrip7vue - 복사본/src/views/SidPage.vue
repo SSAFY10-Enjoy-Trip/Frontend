@@ -18,6 +18,13 @@ export default {
       this.userProfile = authStore.profileImageUrl
     }
   },
+  updated() {
+    if (!this.userLogin) {
+      this.userEmail = ''
+      this.userName = '로그인 후 이용하세요'
+      this.userProfile = '/src/assets/noProfile.png'
+    }
+  },
   methods: {
     navigateToBoardAll() {
       this.$router.push({ path: '/bordAll' })
