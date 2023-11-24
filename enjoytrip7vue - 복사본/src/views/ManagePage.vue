@@ -41,8 +41,8 @@ import { useAuthStore } from '@/store/authStore.js'
 import { useManagerStore } from '@/store/managerStore.js'
 import { useUserStore } from '@/store/userStore.js'
 
-const {managerStore, managerList } = useManagerStore();
-const {userStore, userList } = useUserStore();
+const { managerList } = useManagerStore();
+const { userList } = useUserStore();
 const { authStore } = useAuthStore()
 
 managerList();

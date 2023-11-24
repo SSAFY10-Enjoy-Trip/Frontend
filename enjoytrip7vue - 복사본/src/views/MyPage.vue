@@ -51,8 +51,8 @@
             <span class="h5 text-center"><strong> Email: </strong> {{ email }}</span>
             <span class="h5 text-center">
               <strong> PW: </strong>
-              <input type="password" class="input-area text-center" />
-              <button @click="editPassword" class="change-btn left-space-6">변경</button>
+              <input type="password" class="input-area text-center" v-model="password"/>
+              <button @click="checkAndChangePassword" class="change-btn left-space-6">변경</button>
             </span>
             <span class="h5 text-center">
               <strong>👥 팔로우 수:</strong> {{ followingCount }} <strong>👤 팔로워 수:</strong>
@@ -107,12 +107,14 @@
 <script>
 import http from '@/common/axios.js'
 import { useAuthStore } from '@/store/authStore'
+
 export default {
   data() {
     return {
       profilePicture: 'src/assets/noProfile.png',
       nickname: '사용자 닉네임',
       email: 'user@example.com',
+      password: '',
       position: '사용자 직책',
       isEditingNickname: false,
       editedNickname: '',
@@ -302,9 +304,39 @@ export default {
       this.isEditingNickname = false
       this.nickname = this.editedNickname
     },
-    editPassword() {
-      // 비밀번호 수정 로직 추가
-      alert('비밀번호가 변경되었습니다!')
+    async checkAndChangePassword() {
+      const { authStore } = useAuthStore()
+
+      try {
+        let { data } = await http.get('/checkSession')
+        if (data.result == 'success') {
+          this.changePassword()
+          this.password = '';
+        }
+      } catch (error) {
+        authStore.logout()
+      }
+    },
+    async changePassword() {
+      const { authStore } = useAuthStore()
+
+      let changePasswordObj = {
+        email: this.email,
+        password: this.password
+      }
+
+      try {
+        let { data } = await http.put('http://localhost:8080/member', changePasswordObj)
+        if (data.result == 'success') {
+          alert('비밀번호가 변경되었습니다!')
+          authStore.logout()
+          this.password = '';
+        }else{
+          alert("비밀번호 변경 과정에 문제가 발생했습니다. 다시 시도하세요.")
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }
