@@ -1,6 +1,5 @@
 <template>
-
-<div
+  <div
     style="
       background-image: url('https://i.pinimg.com/originals/13/44/cd/1344cdb8afc60644ab100307da6c3487.gif');
       background-position: bottom;
@@ -27,33 +26,33 @@
           <input
             type="email"
             placeholder="이메일"
-            class="form-control"
+            class="form-control suite-regular"
             :class="{ 'is-valid': isEmailFocusAndValid, 'is-invalid': isEmailFocusAndInValid }"
             v-model="email"
             @input="validateEmail"
             @focus="isEmailFocus = true"
           />
-          <div class="valid-feedback">사용 가능한 이메일입니다.</div>
-          <div class="invalid-feedback">올바른 이메일을 입력해주세요.</div>
+          <div class="valid-feedback suite-regular">사용 가능한 이메일입니다.</div>
+          <div class="invalid-feedback suite-regular">올바른 이메일을 입력해주세요.</div>
         </div>
         <div class="mt-2">
           <input
             type="name"
             placeholder="이름"
-            class="form-control"
+            class="form-control suite-regular"
             :class="{ 'is-valid': isNameFocusAndValid, 'is-invalid': isNameFocusAndInvalid }"
             v-model="name"
             @input="validateName"
             @focus="isNameFocus = true"
           />
-          <div class="valid-feedback"></div>
-          <div class="invalid-feedback">이름을 입력해주세요.</div>
+          <div class="valid-feedback suite-regular">사용 가능한 이름입니다.</div>
+          <div class="invalid-feedback suite-regular">이름을 입력해주세요.</div>
         </div>
         <div class="mt-2">
           <input
             type="password"
             placeholder="비밀번호를 입력하세요."
-            class="form-control"
+            class="form-control suite-regular"
             :class="{
               'is-valid': isPasswordFocusAndValid,
               'is-invalid': isPasswordFocusAndInvalid
@@ -62,8 +61,8 @@
             @input="validatePassword"
             @focus="isPasswordFocus = true"
           />
-          <div class="valid-feedback">사용 가능한 비밀번호입니다.</div>
-          <div class="invalid-feedback">
+          <div class="valid-feedback suite-regular">사용 가능한 비밀번호입니다.</div>
+          <div class="invalid-feedback suite-regular">
             1개 이상의 특수문자, 대소문자 및 숫자를 포함하고 8자리 이상이여야 합니다.
           </div>
         </div>
@@ -71,7 +70,7 @@
           <input
             type="password"
             placeholder="비밀번호를 확인하세요."
-            class="form-control"
+            class="form-control suite-regular"
             :class="{
               'is-valid': isPassword2FocusAndValid,
               'is-invalid': isPassword2FocusAndInvalid
@@ -80,12 +79,13 @@
             @input="validatePassword2"
             @focus="isPassword2Focus = true"
           />
-          <div class="valid-feedback">비밀번호가 일치합니다.</div>
-          <div class="invalid-feedback">비밀번호가 일치하지 않습니다.</div>
+          <div class="valid-feedback suite-regular">비밀번호가 일치합니다.</div>
+          <div class="invalid-feedback suite-regular">비밀번호가 일치하지 않습니다.</div>
         </div>
         <div>
-          <button class="login-btn p-2 h5 suite-bold mt-5" type="button" @click="register">회원가입</button>
-          
+          <button class="login-btn p-2 h5 suite-bold mt-5" type="button" @click="register">
+            회원가입
+          </button>
         </div>
         <div class="mb-4">
           <button class="register-btn suite-regular text-center ps-3 pe-3" type="button">
@@ -96,10 +96,6 @@
       <div class="col-12 col-md-3 col-lg-4 col-xl-4"></div>
     </div>
   </div>
-
-
-
-
 </template>
 
 <script setup>
@@ -175,12 +171,11 @@ const validateEmail = async () => {
   // 이메일 양식을 확인한 후,
   // BackEnd과 연동하여 등록된 이메일이면 isEmailValid.value 를 false 처리한다.
   if (regexp.test(email.value) ? true : false) {
-
     try {
-      let { data } = await axios.get('http://localhost:8080/check/'+email.value) // 이미 javascript 객체
+      let { data } = await axios.get('http://localhost:8080/check/' + email.value) // 이미 javascript 객체
       if (data.result == 'success') {
         isEmailValid.value = true
-      }else{
+      } else {
         isEmailValid.value = false
       }
     } catch (error) {

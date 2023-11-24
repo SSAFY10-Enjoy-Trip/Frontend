@@ -22,10 +22,12 @@
           <!-- 이미지 noProfile.png, userProfileImageUrl -->
           <!-- 로그아웃, 로그인 중 한개가 베타적으로 보이도록 -->
           <li class="nav-item" v-show="authStore.isLogin">
-            <a class="nav-link" @click="hereLogout">{{ authStore.name }} 로그아웃 </a>
+            <a class="nav-link suite-extrabold" @click="hereLogout"
+              >{{ authStore.name }} 로그아웃
+            </a>
           </li>
           <li class="nav-item" v-show="!authStore.isLogin">
-            <router-link to="/login" class="nav-link">로그인</router-link>
+            <router-link to="/login" class="nav-link suite-extrabold">로그인</router-link>
           </li>
         </ul>
       </div>
@@ -40,9 +42,9 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const { authStore, logout } = useAuthStore()
 
-const hereLogout = () =>{
+const hereLogout = () => {
   logout()
-  router.replace("/");
+  router.replace('/')
 }
 </script>
 

@@ -1,6 +1,5 @@
 <template>
-
-<div
+  <div
     style="
       background-image: url('https://i.pinimg.com/originals/13/44/cd/1344cdb8afc60644ab100307da6c3487.gif');
       background-position: bottom;
@@ -26,25 +25,26 @@
         <div class="mt-4">
           <input
             type="email"
-            class="form-control"
+            class="form-control suite-regular"
             placeholder="가입시 입력한 이메일을 입력하세요."
             v-model="email"
             :class="{ 'is-valid': isEmailFocusAndValid, 'is-invalid': isEmailFocusAndInValid }"
             @input="validateEmail"
             @focus="isEmailFocus = true"
           />
+          <div class="invalid-feedback suite-regular">올바른 이메일 형식을 입력해주세요.</div>
         </div>
         <div class="mt-2">
           <input
             type="name"
-            class="form-control"
+            class="form-control suite-regular"
             placeholder="가입시 입력한 이름을 입력하세요."
             v-model="name"
             :class="{ 'is-valid': isNameFocusAndValid, 'is-invalid': isNameFocusAndInvalid }"
             @input="validateName"
             @focus="isNameFocus = true"
           />
-          <div class="invalid-feedback">이름을 입력해주세요.</div>
+          <div class="invalid-feedback suite-regular">이름을 입력해주세요.</div>
         </div>
         <div>
           <button class="login-btn p-2 h5 suite-bold mt-5" type="button" @click="findPassword">
@@ -60,8 +60,6 @@
       <div class="col-12 col-md-3 col-lg-4 col-xl-4"></div>
     </div>
   </div>
-
-
 </template>
 
 <script setup>
@@ -118,7 +116,7 @@ const findPassword = async () => {
       alert('등록된 이메일이 아닙니다.')
     } else {
       // result == success => 존재하는 계정이다. 해당 계정의 이메일로 임시 비밀번호를 발급한다.
-      
+
       try {
         let { data } = await axios.post('http://localhost:8080/check/findPassword', findPasswordObj) // 이미 javascript 객체
         if (data.result == 'success') {
