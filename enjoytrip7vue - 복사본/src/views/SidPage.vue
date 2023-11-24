@@ -29,7 +29,11 @@ export default {
       this.$router.push({ path: '/bordHot' })
     },
     navigateToBoardInsert() {
-      this.$router.push({ path: '/bordInsert' })
+      if (this.userLogin) {
+        this.$router.push({ path: '/bordInsert' })
+      } else {
+        alert('로그인 후 이용해주세요')
+      }
     },
     navigateToMyPage() {
       if (this.userLogin) {
