@@ -14,6 +14,7 @@ export const useAuthStore = defineStore('authStore', () => {
     isSupervisor: false,
     isManager: false,
 
+    memberId: 0,
     name: '',
     profileImageUrl: notLoginUserProfileImageUrl,
 
@@ -26,11 +27,14 @@ export const useAuthStore = defineStore('authStore', () => {
   const setLogin = (payload) => {
     sessionStorage.setItem("isLogin", true);
     sessionStorage.setItem("memberId", payload.memberId)
+    sessionStorage.setItem("email", payload.email)
     sessionStorage.setItem("name", payload.name);
     sessionStorage.setItem("profileImageUrl", payload.profileImageUrl);
     sessionStorage.setItem("role", payload.role);
 
+    authStore.memberId = parseInt(payload.memberId);
     authStore.isLogin = payload.isLogin;
+    authStore.email = payload.email;
     authStore.name = payload.name;
     authStore.profileImageUrl = payload.profileImageUrl;
 
@@ -60,11 +64,14 @@ export const useAuthStore = defineStore('authStore', () => {
   const setLogout = () => {
     sessionStorage.removeItem("isLogin");
     sessionStorage.removeItem("memberId");
+    sessionStorage.removeItem("email");
     sessionStorage.removeItem("name");
     sessionStorage.removeItem("profileImageUrl");
     sessionStorage.removeItem("role");
 
     authStore.isLogin = false;
+    authStore.memberId = 0;
+    authStore.email = '';
     authStore.name = '';
     authStore.password = '';
     authStore.profileImageUrl = notLoginUserProfileImageUrl;

@@ -8,16 +8,17 @@ import { watch } from 'vue'
 import http from '@/common/axios.js'
 
 const route = useRoute()
-const { setLogin, logout} = useAuthStore()
+const { authStore, setLogin, logout} = useAuthStore()
 
 const check = async () => {
   try {
     let { data } = await http.get('/checkSession')
-
+    console.log(data.result)
     if (data.result == 'success') {
       setLogin({
         isLogin: true,
         memberId: data.memberId,
+        email: data.email,
         name: data.name,
         profileImageUrl: data.profileImageUrl,
         role: data.role
@@ -34,22 +35,22 @@ watch(route, () => {
   check()
 })
 
-// const loginStatus = sessionStorage.getItem('isLogin')
+const loginStatus = sessionStorage.getItem('isLogin')
 
-// if (loginStatus) {
-//   authStore.isLogin = sessionStorage.getItem('isLogin')
-//   authStore.name = sessionStorage.getItem('name')
-//   authStore.profileImageUrl = sessionStorage.getItem('profileImageUrl')
+if (loginStatus) {
+  authStore.isLogin = sessionStorage.getItem('isLogin')
+  authStore.name = sessionStorage.getItem('name')
+  authStore.profileImageUrl = sessionStorage.getItem('profileImageUrl')
 
-//   // 관리자일 경우 권한 설정을 위해
-//   if (sessionStorage.getItem('role') == 'ROLE_SUPERVISOR') {
-//     authStore.isSupervisor = true
-//   } else if (sessionStorage.getItem('role') == 'ROLE_MANAGER') {
-//     authStore.isManager = true
-//   }
-// } else {
-//   logout()
-// }
+  // 관리자일 경우 권한 설정을 위해
+  if (sessionStorage.getItem('role') == 'ROLE_SUPERVISOR') {
+    authStore.isSupervisor = true
+  } else if (sessionStorage.getItem('role') == 'ROLE_MANAGER') {
+    authStore.isManager = true
+  }
+} else {
+  logout()
+}
 </script>
 
 <template>

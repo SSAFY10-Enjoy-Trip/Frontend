@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row" style="background-image: url('/src/assets/green.jpg')">
+    <div class="row" style="background-image: url('/src/assets/green.jpg'),">
       <div class="col-md-1 col-lg-2 col-xl-2"></div>
       <div class="col-12 col-sm-12 col-md-10 col-lg-8 col-xl-8">
         <div class="p-4 info-section mt-5 m-4">
@@ -49,7 +49,7 @@
                 변경
               </button>
               <button
-                v-if="!isEditingNickname"
+                v-if="isMyProfile"
                 @click="editNickname"
                 class="change-btn left-space-6"
               >
@@ -57,7 +57,7 @@
               </button>
             </span>
             <span class="h5 text-center"><strong> Email: </strong> {{ email }}</span>
-            <span class="h5 text-center">
+            <span class="h5 text-center" v-if="isMyProfile">
               <strong> PW: </strong>
               <input type="password" class="input-area text-center" v-model="password" />
               <button @click="checkAndChangePassword" class="change-btn left-space-6">변경</button>
@@ -114,7 +114,7 @@
 
 <script>
 import http from '@/common/axios.js'
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useAuthStore } from '@/store/authStore'
 
 export default {
